@@ -45,6 +45,13 @@ export default {
         border: "rgba(255, 105, 180, 0.3)", // Subtle Pink Border
         input: "rgba(255, 255, 255, 0.5)",
         ring: "#FF69B4",
+        // Restoring Botanical Colors
+        ink: {
+          DEFAULT: "#292524", // Stone 800
+          light: "#78716c",   // Stone 500
+        },
+        paper: "#FDFAF5",
+
         chart: {
           "1": "hsl(var(--chart-1))",
           "2": "hsl(var(--chart-2))",
@@ -53,19 +60,22 @@ export default {
           "5": "hsl(var(--chart-5))",
         },
         sidebar: {
-            DEFAULT: "hsl(var(--sidebar-background))",
-            foreground: "hsl(var(--sidebar-foreground))",
-            primary: "hsl(var(--sidebar-primary))",
-            "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-            accent: "hsl(var(--sidebar-accent))",
-            "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-            border: "hsl(var(--sidebar-border))",
-            ring: "hsl(var(--sidebar-ring))",
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
         },
       },
       fontFamily: {
-        sans: ["Quicksand", "Fredoka", "sans-serif"], // Rounded fonts
-        serif: ["Quicksand", "serif"], // Fallback to Quicksand for consistency
+        sans: ["Quicksand", "Fredoka", "sans-serif"],
+        display: ["Fredoka", "sans-serif"], // Mapped to new rounded font
+        body: ["Quicksand", "sans-serif"],  // Mapped to new rounded font
+        ui: ["Quicksand", "sans-serif"],    // Mapped to new rounded font
+        serif: ["Quicksand", "serif"],
         mono: ["monospace"],
       },
       keyframes: {

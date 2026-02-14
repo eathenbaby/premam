@@ -57,7 +57,7 @@ export default function Home() {
   return (
     <div className="min-h-screen pb-20 md:pb-0">
       <Navigation />
-      
+
       {/* Hero Section */}
       <section className="relative min-h-[50vh] flex flex-col items-center justify-center px-6 pt-24 text-center overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
@@ -74,12 +74,12 @@ export default function Home() {
             <Heart className="w-3 h-3 fill-rose-800" />
             Valentine Edition
           </div>
-          
+
           <h1 className="text-6xl md:text-8xl font-display font-medium text-ink mb-6 leading-[0.9]">
-            The Botanical<br/>
-            <span className="italic text-rose-900">Letter Press</span>
+            THE LETTER<br />
+            <span className="italic text-rose-900 text-4xl block mt-4">Botanical Edition</span>
           </h1>
-          
+
           <p className="text-xl md:text-2xl font-body text-ink-light max-w-lg mx-auto leading-relaxed">
             Create a space for honest confessions and digital flowers. A modern love letter for the digital age.
           </p>
@@ -99,10 +99,28 @@ export default function Home() {
               className="paper-card p-8 rounded-2xl relative"
             >
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#E6DCCF] rounded-t-lg -z-10 opacity-80" />
-              
+
               <h2 className="text-3xl font-display text-center mb-8 text-ink">Claim your link</h2>
-              
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                form.handleSubmit((data) => {
+                  // MOCK SUBMISSION FOR VERCEL STATIC DEPLOYMENT
+                  // Since the backend API isn't running on the static site, we mock the success
+                  toast({
+                    title: "Page Created!",
+                    description: "Your Valentine page is ready to share. (Demo Mode)",
+                  });
+                  setCreatedCreator({
+                    id: 1,
+                    displayName: data.displayName,
+                    slug: data.slug,
+                    passcode: data.passcode,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                  });
+                })(e);
+              }} className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500 ml-1">
                     Display Name
@@ -167,10 +185,10 @@ export default function Home() {
               </form>
             </motion.div>
           ) : (
-            <ShareCard 
+            <ShareCard
               key="share-card"
-              slug={createdCreator.slug} 
-              displayName={createdCreator.displayName} 
+              slug={createdCreator.slug}
+              displayName={createdCreator.displayName}
             />
           )}
         </AnimatePresence>
