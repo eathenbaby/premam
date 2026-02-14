@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Send from "@/pages/Send";
 import Inbox from "@/pages/Inbox";
+import { FloatingHearts } from "@/components/InteractiveComponents";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <FloatingHearts />
         <Toaster />
         <Router />
       </TooltipProvider>
