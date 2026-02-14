@@ -44,6 +44,13 @@ export default function Inbox() {
   });
 
   const onLogin = (data: LoginFormValues) => {
+    // MOCK LOGIN FOR VERCEL STATIC DEPLOYMENT
+    if (data.slug === "demo" && data.passcode === "demo") {
+      setSession({ creatorId: 1, displayName: "Demo User" });
+      toast({ title: "Welcome back", description: `Hello, Demo User` });
+      return;
+    }
+
     login.mutate(data, {
       onSuccess: (res) => {
         setSession({ creatorId: res.creator.id, displayName: res.creator.displayName });
@@ -71,7 +78,8 @@ export default function Inbox() {
 
             <h1 className="text-3xl font-display text-center mb-2 font-bold text-ink">Creator Access</h1>
             <p className="text-center font-body text-ink-light mb-8 text-sm">
-              Enter your credentials to view your letters.
+              Enter your credentials to view your letters.<br />
+              <span className="text-xs text-primary/80">(Try: demo / demo)</span>
             </p>
 
             <form onSubmit={form.handleSubmit(onLogin)} className="space-y-6">
@@ -108,11 +116,47 @@ export default function Inbox() {
     );
   }
 
-  return <InboxDashboard creatorId={session.creatorId} displayName={session.displayName} />;
+  return <InboxDashboard creatorId={session.creatorId} displayName={session.displayName} isDemo={session.displayName === "Demo User"} />;
 }
 
-function InboxDashboard({ creatorId, displayName }: { creatorId: number, displayName: string }) {
-  const { data: messages, isLoading } = useMessages(creatorId);
+// MOCK MESSAGES for Demo Mode
+const MOCK_MESSAGES = [
+  {
+    id: 1,
+    creatorId: 1,
+    type: 'confession',
+    vibe: 'romance',
+    content: "I've had a crush on you since we met at the coffee shop. You have the cutest smile! ☕️✨",
+    bouquetId: null,
+    note: null,
+    isRead: false,
+    createdAt: new Date(),
+    senderTimestamp: new Date().toISOString(),
+    senderDevice: "Mobile",
+    senderLocation: "Unknown"
+  },
+  {
+    id: 2,
+    creatorId: 1,
+    type: 'bouquet',
+    vibe: null,
+    content: null,
+    bouquetId: 'bouquet-02',
+    note: "For the sweetest person I know. Happy Valentine's Day! 🌹",
+    isRead: false,
+    createdAt: new Date(Date.now() - 86400000), // Yesterday
+    senderTimestamp: new Date(Date.now() - 86400000).toISOString(),
+    senderDevice: "Desktop",
+    senderLocation: "New York, US"
+  }
+];
+
+function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number, displayName: string, isDemo?: boolean }) {
+  const { data: apiMessages, isLoading } = useMessages(creatorId);
+
+  // Use mock messages if in demo mode or if API fails (likely on Vercel static)
+  const messages = isDemo ? MOCK_MESSAGES : (apiMessages || []);
+  const loading = isDemo ? false : isLoading;
 
   return (
     <div className="min-h-screen bg-transparent pb-20">
@@ -136,7 +180,7 @@ function InboxDashboard({ creatorId, displayName }: { creatorId: number, display
       </header>
 
       <main className="max-w-4xl mx-auto px-4 pt-8">
-        {isLoading ? (
+        {loading ? (
           <div className="py-20 flex justify-center">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
@@ -203,7 +247,7 @@ function InboxDashboard({ creatorId, displayName }: { creatorId: number, display
                         {msg.bouquetId && (
                           <div className="w-20 h-20 shrink-0 rounded-2xl overflow-hidden bg-stone-100 border-2 border-white shadow-sm">
                             <img
-                              src={FLOWER_IMAGES[msg.bouquetId]}
+                              src={FLOWER_IMAGES[msg.bouquetId as string]}
                               alt="Bouquet"
                               className="w-full h-full object-cover"
                             />
