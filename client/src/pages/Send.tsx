@@ -197,7 +197,8 @@ export default function Send() {
                   {VIBES.map((vibe) => (
                     <VibeCard
                       key={vibe.id}
-                      {...vibe}
+                      vibe={vibe.id}
+                      label={vibe.label}
                       selected={selectedVibe === vibe.id}
                       onClick={() => setSelectedVibe(vibe.id === selectedVibe ? null : vibe.id)}
                     />

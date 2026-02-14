@@ -6,7 +6,7 @@ import { useLogin } from "@/hooks/use-creators";
 import { useMessages } from "@/hooks/use-messages";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { Loader2, Lock, Heart, Flower } from "lucide-react";
+import { Loader2, Lock, Heart, Flower, Mail } from "lucide-react";
 import { format } from "date-fns";
 import { z } from "zod";
 import { Navigation } from "@/components/Navigation";
@@ -14,14 +14,21 @@ import { cn } from "@/lib/utils";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+import bouquet01 from "@assets/64603-OB2R9V-578_1771092125803.jpg";
+import bouquet02 from "@assets/6502939_1771092125804.jpg";
+import bouquet03 from "@assets/6523075_1771092125804.jpg";
+import bouquet04 from "@assets/6463769_1771092135717.jpg";
+import bouquet05 from "@assets/6517084_1771092142814.jpg";
+import bouquet06 from "@assets/6518416_1771092148926.jpg";
+
 // Mock flower map again for display
 const FLOWER_IMAGES: Record<string, string> = {
-  "bouquet-01": "https://images.unsplash.com/photo-1518709766631-a6a7f45921c3?w=400&h=400&fit=crop",
-  "bouquet-02": "https://images.unsplash.com/photo-1520763185298-1b434c919102?w=400&h=400&fit=crop",
-  "bouquet-03": "https://images.unsplash.com/photo-1490750967868-58cb75069ed6?w=400&h=400&fit=crop",
-  "bouquet-04": "https://images.unsplash.com/photo-1563241527-3004b7be0217?w=400&h=400&fit=crop",
-  "bouquet-05": "https://images.unsplash.com/photo-1470509037663-253afd7f0f51?w=400&h=400&fit=crop",
-  "bouquet-06": "https://images.unsplash.com/photo-1522291917539-722ba4855422?w=400&h=400&fit=crop",
+  "bouquet-01": bouquet01,
+  "bouquet-02": bouquet02,
+  "bouquet-03": bouquet03,
+  "bouquet-04": bouquet04,
+  "bouquet-05": bouquet05,
+  "bouquet-06": bouquet06,
 };
 
 export default function Inbox() {
