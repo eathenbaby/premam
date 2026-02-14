@@ -77,7 +77,6 @@ export default function Home() {
 
           <h1 className="text-6xl md:text-8xl font-display font-medium text-ink mb-6 leading-[0.9]">
             THE LETTER<br />
-            <span className="italic text-rose-900 text-4xl block mt-4">Botanical Edition</span>
           </h1>
 
           <p className="text-xl md:text-2xl font-body text-ink-light max-w-lg mx-auto leading-relaxed">

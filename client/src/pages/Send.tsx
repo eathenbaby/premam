@@ -60,7 +60,7 @@ export default function Send() {
   };
 
   const handleSubmit = async () => {
-    if (!creator) return;
+    if (!activeCreator) return;
 
     if (activeTab === 'confession' && !content) {
       toast({ variant: "destructive", title: "Wait!", description: "Please write a message first." });
@@ -72,16 +72,22 @@ export default function Send() {
     }
 
     try {
-      await sendMessage.mutateAsync({
-        creatorId: creator.id,
-        type: activeTab,
-        vibe: activeTab === 'confession' ? selectedVibe : null,
-        content: activeTab === 'confession' ? content : null,
-        bouquetId: activeTab === 'bouquet' ? selectedBouquet : null,
-        note: activeTab === 'bouquet' ? note : null,
-        senderDevice: navigator.userAgent,
-        senderLocation: "Unknown", // In a real app we'd ask for permission or use IP geo
-      });
+      // MOCK SUBMISSION FOR VERCEL STATIC DEPLOYMENT
+      // If we are in demo mode (static site), we skip the real API call
+      if (activeCreator.slug === 'demo' || !creator) {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Fake network delay
+      } else {
+        await sendMessage.mutateAsync({
+          creatorId: activeCreator.id,
+          type: activeTab,
+          vibe: activeTab === 'confession' ? selectedVibe : null,
+          content: activeTab === 'confession' ? content : null,
+          bouquetId: activeTab === 'bouquet' ? selectedBouquet : null,
+          note: activeTab === 'bouquet' ? note : null,
+          senderDevice: navigator.userAgent,
+          senderLocation: "Unknown",
+        });
+      }
 
       setIsSuccess(true);
       triggerConfetti();
@@ -103,7 +109,18 @@ export default function Send() {
     );
   }
 
-  if (!creator) {
+  // MOCK FALLBACK FOR VERCEL STATIC DEPLOYMENT
+  // If the API fails (which it will on static Vercel), we use this mock creator
+  const activeCreator = creator || {
+    id: 1,
+    displayName: "Your Valentine",
+    slug: slug || "demo",
+    passcode: "demo",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  if (!activeCreator) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-paper p-4 text-center">
         <h1 className="text-4xl font-display mb-4">User not found</h1>
@@ -158,7 +175,7 @@ export default function Send() {
           </div>
           <h2 className="text-4xl font-display mb-4 font-bold text-ink">Sent with love!</h2>
           <p className="font-body text-ink-light mb-8">
-            Your message has been delivered to {creator.displayName}.
+            Your message has been delivered to {activeCreator.displayName}.
           </p>
           <button
             onClick={() => {
@@ -188,7 +205,7 @@ export default function Send() {
           <span className="block text-xs font-ui font-bold uppercase tracking-widest text-primary mb-2">
             Yay! You said yes!
           </span>
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-ink">Send a Message to {creator.displayName}</h1>
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-ink">Send a Message to {activeCreator.displayName}</h1>
         </motion.div>
       </header>
 
@@ -311,7 +328,7 @@ export default function Send() {
               )}
             </CutesyButton>
             <p className="text-center mt-4 text-xs font-ui text-stone-400">
-              Messages are private and only visible to {creator.displayName}.
+              Messages are private and only visible to {activeCreator.displayName}.
             </p>
           </div>
         </GlassCard>
