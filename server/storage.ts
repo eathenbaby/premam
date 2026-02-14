@@ -1,38 +1,45 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { db } from "./db";
+import { creators, messages, type Creator, type InsertCreator, type Message, type InsertMessage } from "@shared/schema";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // Creators
+  createCreator(creator: InsertCreator): Promise<Creator>;
+  getCreatorBySlug(slug: string): Promise<Creator | undefined>;
+  getCreatorById(id: number): Promise<Creator | undefined>;
+  
+  // Messages
+  createMessage(message: InsertMessage): Promise<Message>;
+  getMessagesForCreator(creatorId: number): Promise<Message[]>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
+export class DatabaseStorage implements IStorage {
+  async createCreator(insertCreator: InsertCreator): Promise<Creator> {
+    const [creator] = await db.insert(creators).values(insertCreator).returning();
+    return creator;
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async getCreatorBySlug(slug: string): Promise<Creator | undefined> {
+    const [creator] = await db.select().from(creators).where(eq(creators.slug, slug));
+    return creator;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async getCreatorById(id: number): Promise<Creator | undefined> {
+    const [creator] = await db.select().from(creators).where(eq(creators.id, id));
+    return creator;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async createMessage(insertMessage: InsertMessage): Promise<Message> {
+    const [message] = await db.insert(messages).values(insertMessage).returning();
+    return message;
+  }
+
+  async getMessagesForCreator(creatorId: number): Promise<Message[]> {
+    return await db.select()
+      .from(messages)
+      .where(eq(messages.creatorId, creatorId))
+      .orderBy(desc(messages.senderTimestamp));
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
