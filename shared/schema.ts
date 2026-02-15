@@ -18,20 +18,23 @@ export const messages = pgTable("messages", {
   id: serial("id").primaryKey(),
   creatorId: integer("creator_id").notNull().references(() => creators.id),
   type: text("type").notNull(), // 'confession' | 'bouquet'
-  
+
   // Confession specific
   vibe: text("vibe"), // 'coffee', 'dinner', 'talk', 'adventure', 'romance', 'friends'
   content: text("content"), // The message text
-  
+
   // Bouquet specific
   bouquetId: text("bouquet_id"), // 'bouquet-01' to 'bouquet-06'
   note: text("note"), // Personal note attached to bouquet
-  
+
   // Metadata (for transparency/safety)
   senderDevice: text("sender_device"),
   senderLocation: text("sender_location"),
   senderTimestamp: timestamp("sender_timestamp").defaultNow(),
-  
+
+  // NGL-style Requirement
+  instagramUsername: text("instagram_username").notNull(),
+
   isRead: boolean("is_read").default(false),
   isArchived: boolean("is_archived").default(false),
 });
@@ -53,6 +56,7 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   note: true,
   senderDevice: true,
   senderLocation: true,
+  instagramUsername: true,
 });
 
 

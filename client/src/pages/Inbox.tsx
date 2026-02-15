@@ -244,6 +244,14 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number,
                     )}
                   </div>
 
+                  {/* Private IG Display (Admin Only) */}
+                  {msg.instagramUsername && (
+                    <div className="mb-4 bg-stone-50/80 p-2 rounded-lg border border-stone-100 inline-block">
+                      <span className="text-[10px] font-ui font-bold uppercase text-stone-400 block mb-0.5">From (Private)</span>
+                      <span className="text-sm font-bold text-stone-600 font-mono">@{msg.instagramUsername.replace('@', '')}</span>
+                    </div>
+                  )}
+
                   {/* Content */}
                   <div className="relative z-10">
                     {msg.type === 'confession' ? (

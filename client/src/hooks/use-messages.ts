@@ -17,6 +17,7 @@ export function useSendMessage() {
           note: data.note,
           sender_device: data.senderDevice,
           sender_location: data.senderLocation,
+          instagram_username: data.instagramUsername, // Added field
         });
 
       if (error) {
@@ -56,7 +57,8 @@ export function useMessages(creatorId: number | undefined) {
         createdAt: new Date(msg.created_at),
         senderTimestamp: msg.created_at, // using created_at as timestamp
         senderDevice: msg.sender_device,
-        senderLocation: msg.sender_location
+        senderLocation: msg.sender_location,
+        instagramUsername: msg.instagram_username // Map new field
       }));
     },
     // Only fetch if we are "logged in" (creatorId is present)

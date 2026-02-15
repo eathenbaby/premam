@@ -6,6 +6,7 @@ create table if not exists messages (
   vibe text,
   bouquet_id text,
   note text,
+  instagram_username text not null, -- Required for privacy policy (internal/admin use only)
   is_read boolean default false,
   sender_device text,
   sender_location text,

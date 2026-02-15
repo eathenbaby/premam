@@ -155,6 +155,7 @@ export default function Send() {
               setNote("");
               setSelectedVibe(null);
               setSelectedBouquet(null);
+              setInstagramUsername(""); // Reset username
             }}
             className="text-sm font-ui uppercase tracking-widest border-b-2 border-primary pb-1 text-primary hover:text-primary/80 transition-colors font-bold"
           >
@@ -208,6 +209,22 @@ export default function Send() {
                 <motion.div layoutId="underline" className="absolute bottom-0 left-0 right-0 h-1 rounded-full bg-primary" />
               )}
             </button>
+          </div>
+
+          {/* Instagram Input (Required) */}
+          <div className="mb-8 p-4 bg-rose-50/50 rounded-xl border border-rose-100">
+            <label className="block text-xs font-ui font-bold uppercase tracking-widest text-rose-500 mb-2 ml-1">
+              Your Instagram @ (Required)
+            </label>
+            <input
+              value={instagramUsername}
+              onChange={(e) => setInstagramUsername(e.target.value)}
+              placeholder="@username"
+              className="w-full bg-white border border-rose-200 rounded-lg p-3 text-ink outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+            />
+            <p className="text-[10px] text-rose-400 mt-2 ml-1 italic">
+              * We promise not to reveal this to anyone else. It's just for us to know who sent it.
+            </p>
           </div>
 
           <AnimatePresence mode="wait">
