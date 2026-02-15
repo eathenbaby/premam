@@ -6,51 +6,65 @@ export default {
   theme: {
     extend: {
       borderRadius: {
-        lg: "32px", // 2rem - Extreme rounding for cards
-        md: "24px", // 1.5rem
-        sm: "12px", // 0.75rem
-        pill: "50px", // For buttons
+        lg: "12px",
+        md: "10px",
+        sm: "8px",
+        pill: "50px",
       },
       colors: {
-        background: "#FFE4F0", // Soft Blush
-        foreground: "#8B0A50", // Deep Burgundy
+        background: "#FFF9F0",
+        foreground: "#3D1C1C",
         card: {
-          DEFAULT: "rgba(255, 255, 255, 0.7)",
-          foreground: "#8B0A50",
+          DEFAULT: "#FDFAF5",
+          foreground: "#3D1C1C",
         },
         popover: {
-          DEFAULT: "#FFE4F0",
-          foreground: "#8B0A50",
+          DEFAULT: "#FFF9F0",
+          foreground: "#3D1C1C",
         },
         primary: {
-          DEFAULT: "#FF69B4", // Hot Pink
-          foreground: "#FFFFFF",
+          DEFAULT: "#8B1A1A",
+          foreground: "#FFF9F0",
         },
         secondary: {
-          DEFAULT: "#FFE4F0",
-          foreground: "#FF69B4",
+          DEFAULT: "#E8C4C4",
+          foreground: "#6B0F1A",
         },
         muted: {
-          DEFAULT: "rgba(255, 255, 255, 0.5)",
-          foreground: "#8B0A50",
+          DEFAULT: "#F5ECD7",
+          foreground: "#8B7355",
         },
         accent: {
-          DEFAULT: "#FFD700", // Warm Yellow (Gold)
-          foreground: "#8B0A50",
+          DEFAULT: "#A3785F",
+          foreground: "#FFF9F0",
         },
         destructive: {
-          DEFAULT: "#FF4500",
-          foreground: "#FFFFFF",
+          DEFAULT: "#6B0F1A",
+          foreground: "#FFF9F0",
         },
-        border: "rgba(255, 105, 180, 0.3)", // Subtle Pink Border
-        input: "rgba(255, 255, 255, 0.5)",
-        ring: "#FF69B4",
-        // Restoring Botanical Colors
+        border: "rgba(139, 26, 26, 0.15)",
+        input: "#FAF0E6",
+        ring: "#8B1A1A",
         ink: {
-          DEFAULT: "#292524", // Stone 800
-          light: "#78716c",   // Stone 500
+          DEFAULT: "#2C1810",
+          light: "#8B7355",
         },
         paper: "#FDFAF5",
+        burgundy: {
+          DEFAULT: "#8B1A1A",
+          dark: "#6B0F1A",
+          wine: "#722F37",
+        },
+        blush: {
+          DEFAULT: "#D4A5A5",
+          light: "#E8C4C4",
+          dark: "#C19A9A",
+        },
+        parchment: {
+          DEFAULT: "#FFF9F0",
+          aged: "#F5ECD7",
+          warm: "#FAF0E6",
+        },
 
         chart: {
           "1": "hsl(var(--chart-1))",
@@ -71,11 +85,12 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Quicksand", "Fredoka", "sans-serif"],
-        display: ["Fredoka", "sans-serif"], // Mapped to new rounded font
-        body: ["Quicksand", "sans-serif"],  // Mapped to new rounded font
-        ui: ["Quicksand", "sans-serif"],    // Mapped to new rounded font
-        serif: ["Quicksand", "serif"],
+        sans: ["DM Sans", "sans-serif"],
+        display: ["Cormorant Garamond", "serif"],
+        body: ["Lora", "serif"],
+        ui: ["DM Sans", "sans-serif"],
+        script: ["Dancing Script", "cursive"],
+        serif: ["Lora", "serif"],
         mono: ["monospace"],
       },
       keyframes: {
@@ -89,18 +104,23 @@ export default {
         },
         "float": {
           "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-10px)" },
+          "50%": { transform: "translateY(-6px)" },
         },
-        "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 10px #FF69B4", transform: "scale(1)" },
-          "50%": { boxShadow: "0 0 20px #FFD700", transform: "scale(1.05)" },
-        }
+        "breathe": {
+          "0%, 100%": { opacity: "0.4" },
+          "50%": { opacity: "0.7" },
+        },
+        "gentle-spin": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "float": "float 3s ease-in-out infinite",
-        "pulse-glow": "pulse-glow 2s infinite",
+        "float": "float 4s ease-in-out infinite",
+        "breathe": "breathe 5s ease-in-out infinite",
+        "gentle-spin": "gentle-spin 20s linear infinite",
       },
     },
   },

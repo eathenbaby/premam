@@ -107,46 +107,47 @@ export default function Inbox() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-transparent px-4">
+      <div className="min-h-screen flex items-center justify-center px-4">
         <Navigation />
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="w-full max-w-md"
         >
-          <GlassCard className="rounded-2xl relative overflow-hidden p-10">
-            <div className="w-16 h-16 bg-white/50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-6 h-6 text-primary" />
+          <GlassCard className="rounded-lg relative overflow-hidden p-10">
+            <div className="w-16 h-16 bg-blush-light/30 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-6 h-6 text-burgundy" />
             </div>
 
-            <h1 className="text-3xl font-display text-center mb-2 font-bold text-ink">Admin Access 🗡️</h1>
-            <p className="text-center font-body text-ink-light mb-8 text-sm">
+            <h1 className="text-3xl font-display text-center mb-2 font-semibold text-ink">Admin Access 🗡️</h1>
+            <p className="text-center font-body text-ink-light mb-8 text-sm italic">
               Only the Musketeers can enter.
             </p>
 
             <form onSubmit={form.handleSubmit(onLogin)} className="space-y-6">
               <div className="space-y-1">
-                <label className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500 ml-1">
+                <label className="text-xs font-ui font-bold uppercase tracking-widest text-ink-light ml-1">
                   Username
                 </label>
                 <input
                   {...form.register("slug")}
                   type="text"
                   placeholder="Who are you?"
-                  className="w-full p-3 bg-white/50 border border-stone-200 rounded-lg outline-none focus:border-primary transition-colors input-dotted"
+                  className="w-full p-3 bg-parchment border border-burgundy/15 rounded-lg outline-none focus:border-burgundy/40 transition-colors duration-300 font-body placeholder:text-ink-light/40"
                   autoFocus
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500 ml-1">
+                <label className="text-xs font-ui font-bold uppercase tracking-widest text-ink-light ml-1">
                   Password
                 </label>
                 <input
                   {...form.register("passcode")}
                   type="password"
                   placeholder="••••••••"
-                  className="w-full p-3 bg-white/50 border border-stone-200 rounded-lg outline-none focus:border-primary transition-colors tracking-widest input-dotted"
+                  className="w-full p-3 bg-parchment border border-burgundy/15 rounded-lg outline-none focus:border-burgundy/40 transition-colors duration-300 tracking-widest font-body"
                 />
               </div>
 
@@ -185,7 +186,6 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
   const messages = isDemo ? MOCK_MESSAGES : (apiMessages || []);
   const loading = isDemo ? false : isLoading;
 
-  // Fetch sender user details
   useEffect(() => {
     if (!messages || messages.length === 0) return;
     const userIds = Array.from(new Set(messages.map((m: any) => m.senderUserId).filter(Boolean))) as number[];
@@ -226,21 +226,23 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
     }
   };
 
+  const tilts = ['scrapbook-tilt-1', 'scrapbook-tilt-2', 'scrapbook-tilt-3', 'scrapbook-tilt-4', 'scrapbook-tilt-5'];
+
   return (
-    <div className="min-h-screen bg-transparent pb-20">
+    <div className="min-h-screen pb-20">
       <Navigation />
 
-      <header className="pt-12 px-6 pb-6 border-b border-white/20 bg-white/30 backdrop-blur-sm sticky top-0 z-40">
+      <header className="pt-12 px-6 pb-6 border-b border-burgundy/10 bg-parchment-warm/80 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-4xl mx-auto flex items-end justify-between">
           <div>
-            <span className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500">Admin Inbox</span>
-            <h1 className="text-4xl font-display text-ink font-bold">Confessions</h1>
+            <span className="text-xs font-ui font-bold uppercase tracking-widest text-ink-light">Admin Inbox</span>
+            <h1 className="text-4xl font-display text-ink font-semibold">Confessions</h1>
           </div>
           <div className="text-right">
-            <span className="text-3xl font-display text-primary block leading-none font-bold">
+            <span className="text-3xl font-display text-burgundy block leading-none font-semibold">
               {messages?.length || 0}
             </span>
-            <span className="text-[10px] font-ui font-bold uppercase tracking-widest text-stone-500">Letters</span>
+            <span className="text-[10px] font-ui font-bold uppercase tracking-widest text-ink-light">Letters</span>
           </div>
         </div>
       </header>
@@ -248,15 +250,15 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
       <main className="max-w-4xl mx-auto px-4 pt-8">
         {loading ? (
           <div className="py-20 flex justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <Loader2 className="w-8 h-8 animate-spin text-burgundy" />
           </div>
         ) : messages?.length === 0 ? (
-          <GlassCard className="text-center py-20 text-stone-400">
-            <div className="w-20 h-20 bg-white/50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Sparkles className="w-8 h-8 opacity-50 text-primary" />
+          <GlassCard className="text-center py-20">
+            <div className="w-20 h-20 bg-blush-light/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="w-8 h-8 text-burgundy/40" />
             </div>
             <p className="font-display text-xl text-ink">No letters yet.</p>
-            <p className="font-body text-sm mt-2">Share your link to receive some love.</p>
+            <p className="font-body text-sm mt-2 text-ink-light italic">Share your link to receive some love.</p>
           </GlassCard>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -265,17 +267,18 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
                 key={msg.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.1, duration: 0.5, ease: "easeOut" }}
+                className={tilts[i % tilts.length]}
               >
                 <GlassCard
                   className={cn(
-                    "p-6 rounded-3xl relative overflow-hidden border-2 transition-all",
-                    msg.type === "bouquet" ? "border-purple-200" : "border-primary/20",
-                    msg.isPublic && "ring-2 ring-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.3)] bg-emerald-50/30"
+                    "p-6 rounded-lg relative overflow-hidden border transition-all duration-400",
+                    msg.type === "bouquet" ? "border-blush-dark/30" : "border-burgundy/15",
+                    msg.isPublic && "ring-1 ring-accent/40 bg-parchment-aged/30"
                   )}
                 >
                   {msg.isPublic && (
-                    <div className="absolute top-0 right-0 bg-emerald-400 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl z-20 shadow-sm flex items-center gap-1">
+                    <div className="absolute top-0 right-0 bg-accent text-parchment text-[10px] font-bold font-ui px-3 py-1 rounded-bl-lg z-20 flex items-center gap-1">
                       <CheckCircle className="w-3 h-3" /> PUBLIC
                     </div>
                   )}
@@ -284,20 +287,20 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-2">
                       {msg.type === "bouquet" ? (
-                        <span className="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center">
+                        <span className="w-8 h-8 bg-blush-light/40 text-burgundy-wine rounded-full flex items-center justify-center">
                           <Flower className="w-4 h-4" />
                         </span>
                       ) : (
-                        <span className="w-8 h-8 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center">
+                        <span className="w-8 h-8 bg-blush-light/40 text-burgundy rounded-full flex items-center justify-center">
                           <Heart className="w-4 h-4" />
                         </span>
                       )}
                       <div>
-                        <span className="block text-[10px] font-ui font-bold uppercase tracking-widest text-stone-400">
+                        <span className="block text-[10px] font-ui font-bold uppercase tracking-widest text-ink-light">
                           {msg.type === "bouquet" ? "Bouquet" : "Confession"}
                         </span>
                         {msg.senderTimestamp && (
-                          <span className="text-xs text-stone-400 font-body italic">
+                          <span className="text-xs text-ink-light font-body italic">
                             {format(new Date(msg.senderTimestamp), "MMM d, h:mm a")}
                           </span>
                         )}
@@ -305,17 +308,16 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
                     </div>
                   </div>
 
-                  {/* Sender Intel (Admin Only) */}
+                  {/* Sender Intel */}
                   <div className="mb-4 space-y-2">
-                    {/* User account info */}
                     {(msg as any).senderUserId && senderUsers[(msg as any).senderUserId] && (
-                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-3 rounded-xl border border-blue-200 mb-2">
-                        <span className="text-[10px] font-ui font-bold uppercase text-blue-400 block mb-1">👤 Registered User</span>
+                      <div className="bg-parchment-aged/50 p-3 rounded-lg border border-burgundy/10 mb-2">
+                        <span className="text-[10px] font-ui font-bold uppercase text-accent block mb-1">👤 Registered User</span>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-bold text-blue-700">{senderUsers[(msg as any).senderUserId].fullName}</span>
-                          <span className="text-xs font-mono text-blue-500 bg-blue-100 px-2 py-0.5 rounded">{senderUsers[(msg as any).senderUserId].collegeUid}</span>
+                          <span className="text-sm font-bold text-ink font-body">{senderUsers[(msg as any).senderUserId].fullName}</span>
+                          <span className="text-xs font-mono text-ink-light bg-parchment px-2 py-0.5 rounded">{senderUsers[(msg as any).senderUserId].collegeUid}</span>
                         </div>
-                        <span className="text-xs text-stone-400">📱 {senderUsers[(msg as any).senderUserId].mobileNumber}</span>
+                        <span className="text-xs text-ink-light">📱 {senderUsers[(msg as any).senderUserId].mobileNumber}</span>
                       </div>
                     )}
                     <div className="flex flex-wrap gap-2">
@@ -324,26 +326,25 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
                           href={`https://instagram.com/${msg.instagramUsername.replace("@", "")}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="bg-gradient-to-r from-pink-50 to-purple-50 p-2 rounded-lg border border-pink-200 inline-block hover:shadow-md transition-shadow"
+                          className="bg-blush-light/20 p-2 rounded-lg border border-burgundy/10 inline-block hover:shadow-sm transition-shadow duration-300"
                         >
-                          <span className="text-[10px] font-ui font-bold uppercase text-stone-400 block mb-0.5">From</span>
-                          <span className="text-sm font-bold text-stone-600 font-mono">@{msg.instagramUsername.replace("@", "")}</span>
+                          <span className="text-[10px] font-ui font-bold uppercase text-ink-light block mb-0.5">From</span>
+                          <span className="text-sm font-bold text-ink font-mono">@{msg.instagramUsername.replace("@", "")}</span>
                         </a>
                       )}
                       {msg.recipientName && (
-                        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-2 rounded-lg border border-purple-200 inline-block">
-                          <span className="text-[10px] font-ui font-bold uppercase text-stone-400 block mb-0.5">To</span>
-                          <span className="text-sm font-bold text-purple-600">💌 {msg.recipientName}</span>
+                        <div className="bg-blush-light/20 p-2 rounded-lg border border-burgundy/10 inline-block">
+                          <span className="text-[10px] font-ui font-bold uppercase text-ink-light block mb-0.5">To</span>
+                          <span className="text-sm font-bold text-burgundy font-body">💌 {msg.recipientName}</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Date & Gender Preferences */}
                     <div className="flex flex-wrap gap-2">
                       {msg.datePreference && (
-                        <div className="bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 flex items-center gap-1.5">
+                        <div className="bg-parchment-aged/40 px-2.5 py-1 rounded-full border border-burgundy/10 flex items-center gap-1.5">
                           <span className="text-[10px]">{msg.datePreference === 'random' ? '🎲' : '💘'}</span>
-                          <span className="text-[10px] font-bold text-amber-600 uppercase">{msg.datePreference}</span>
+                          <span className="text-[10px] font-bold text-ink-light uppercase font-ui">{msg.datePreference}</span>
                         </div>
                       )}
                       {msg.recipientInstagram && (
@@ -351,31 +352,31 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
                           href={`https://instagram.com/${msg.recipientInstagram}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="bg-pink-50 px-2.5 py-1 rounded-full border border-pink-200 flex items-center gap-1.5 hover:shadow-sm transition-shadow"
+                          className="bg-blush-light/20 px-2.5 py-1 rounded-full border border-burgundy/10 flex items-center gap-1.5 hover:shadow-sm transition-shadow duration-300"
                         >
                           <span className="text-[10px]">💘</span>
-                          <span className="text-[10px] font-bold text-pink-600">wants @{msg.recipientInstagram}</span>
+                          <span className="text-[10px] font-bold text-burgundy font-ui">wants @{msg.recipientInstagram}</span>
                         </a>
                       )}
                       {msg.genderPreference && (
-                        <div className="bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200 flex items-center gap-1.5">
+                        <div className="bg-parchment-aged/40 px-2.5 py-1 rounded-full border border-burgundy/10 flex items-center gap-1.5">
                           <span className="text-[10px]">{msg.genderPreference === 'girl' ? '👩' : msg.genderPreference === 'boy' ? '👦' : '✨'}</span>
-                          <span className="text-[10px] font-bold text-indigo-600 uppercase">{msg.genderPreference}</span>
+                          <span className="text-[10px] font-bold text-ink-light uppercase font-ui">{msg.genderPreference}</span>
                         </div>
                       )}
                     </div>
 
                     <div className="flex flex-wrap gap-2">
                       {msg.senderIp && (
-                        <div className="bg-stone-50/80 px-2 py-1 rounded border border-stone-100 flex items-center gap-1.5" title="Sender IP">
+                        <div className="bg-parchment/60 px-2 py-1 rounded border border-burgundy/5 flex items-center gap-1.5" title="Sender IP">
                           <span className="text-[10px]">🔍</span>
-                          <span className="text-[10px] font-mono text-stone-400">{msg.senderIp}</span>
+                          <span className="text-[10px] font-mono text-ink-light">{msg.senderIp}</span>
                         </div>
                       )}
                       {msg.senderDevice && (
-                        <div className="bg-stone-50/80 px-2 py-1 rounded border border-stone-100 flex items-center gap-1.5" title="Device">
+                        <div className="bg-parchment/60 px-2 py-1 rounded border border-burgundy/5 flex items-center gap-1.5" title="Device">
                           <span className="text-[10px]">💻</span>
-                          <span className="text-[10px] font-mono text-stone-400">{msg.senderDevice}</span>
+                          <span className="text-[10px] font-mono text-ink-light">{msg.senderDevice}</span>
                         </div>
                       )}
                     </div>
@@ -388,7 +389,7 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
                     ) : (
                       <div className="flex items-start gap-4">
                         {msg.bouquetId && (
-                          <div className="w-20 h-20 shrink-0 rounded-2xl overflow-hidden bg-stone-100 border-2 border-white shadow-sm">
+                          <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-parchment-aged border border-burgundy/10 shadow-sm">
                             <img src={FLOWER_IMAGES[msg.bouquetId as string]} alt="Bouquet" className="w-full h-full object-cover" />
                           </div>
                         )}
@@ -400,28 +401,26 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
                   </div>
 
                   {/* Moderation Actions */}
-                  <div className="flex gap-2 pt-4 border-t border-white/20">
+                  <div className="flex gap-2 pt-4 border-t border-burgundy/10">
                     <CutesyButton
                       onClick={() => handleToggle(msg.id, msg.isPublic)}
                       className={cn(
                         "flex-1 text-xs py-2 h-auto shadow-none",
-                        msg.isPublic ? "bg-stone-200 text-stone-600 hover:bg-stone-300" : "bg-emerald-500 hover:bg-emerald-600 text-white"
+                        msg.isPublic
+                          ? "bg-parchment-aged text-ink-light hover:bg-blush-light/30 border border-burgundy/10"
+                          : "bg-burgundy hover:bg-burgundy-dark text-parchment"
                       )}
                     >
                       {msg.isPublic ? (
-                        <>
-                          <EyeOff className="w-3 h-3 mr-1" /> Hide
-                        </>
+                        <><EyeOff className="w-3 h-3 mr-1" /> Hide</>
                       ) : (
-                        <>
-                          <Eye className="w-3 h-3 mr-1" /> Approve
-                        </>
+                        <><Eye className="w-3 h-3 mr-1" /> Approve</>
                       )}
                     </CutesyButton>
 
                     <button
                       onClick={() => handleDelete(msg.id)}
-                      className="p-2 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition-colors"
+                      className="p-2 bg-burgundy-dark/10 text-burgundy-dark rounded-lg hover:bg-burgundy-dark/20 transition-colors duration-300"
                       title="Delete Message"
                     >
                       <Trash2 className="w-4 h-4" />

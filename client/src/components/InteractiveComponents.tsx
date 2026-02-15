@@ -13,18 +13,19 @@ export const CutesyButton = ({ children, className, variant = "primary", onClick
 
     return (
         <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02, y: -1 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
             onClick={onClick}
             className={cn(
-                "btn-sunset px-8 py-4 text-lg md:text-xl font-bold tracking-wider uppercase transition-all duration-300 transform",
+                "btn-sunset px-8 py-4 text-lg font-display font-semibold tracking-wide transition-all duration-400",
                 className
             )}
             {...props}
         >
-            <span className="relative z-10 drop-shadow-sm">
+            <span className="relative z-10">
                 {isHovered && children === "Yes" ? "YAY!" : children}
             </span>
         </motion.button>
@@ -42,14 +43,12 @@ export const DodgingButton = ({ children, className }: { children: React.ReactNo
 
         if (!parentRect) return;
 
-        // Calculate safe boundaries (keep within screen/container)
         const maxX = Math.min(window.innerWidth - 150, parentRect.width - 150);
         const maxY = Math.min(window.innerHeight - 100, parentRect.height - 100);
 
-        const newX = Math.random() * (maxX - (-maxX)) + (-maxX); // Simplified random move logic
+        const newX = Math.random() * (maxX - (-maxX)) + (-maxX);
         const newY = Math.random() * (maxY - (-maxY)) + (-maxY);
 
-        // Constrain to typical view area for simplicity in this random logic
         const constrainedX = Math.max(-150, Math.min(150, newX));
         const constrainedY = Math.max(-200, Math.min(200, newY));
 
@@ -64,17 +63,14 @@ export const DodgingButton = ({ children, className }: { children: React.ReactNo
     return (
         <motion.button
             animate={{ x: position.x, y: position.y }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            transition={{ type: "spring", stiffness: 200, damping: 25 }}
             onMouseEnter={dodge}
             onTouchStart={dodge}
             className={cn(
-                "bg-white text-primary font-bold px-8 py-4 rounded-full shadow-lg border-2 border-primary/20",
-                "absolute md:relative", // Ensure it can move freely
+                "bg-parchment-warm text-ink font-display font-semibold px-8 py-4 rounded-lg shadow-md border border-burgundy/15",
+                "absolute md:relative",
                 className
             )}
-            style={{
-
-            }}
         >
             {text}
         </motion.button>
@@ -92,17 +88,17 @@ export const GlassCard = ({ children, className }: { children: React.ReactNode; 
 export const FloatingHearts = () => {
     return (
         <div className="floating-hearts">
-            {Array.from({ length: 15 }).map((_, i) => (
+            {Array.from({ length: 12 }).map((_, i) => (
                 <div
                     key={i}
                     className="heart-particle"
                     style={{
                         left: `${Math.random() * 100}%`,
-                        animationDelay: `${Math.random() * 5}s`,
-                        animationDuration: `${10 + Math.random() * 10}s`
+                        animationDelay: `${Math.random() * 7}s`,
+                        animationDuration: `${12 + Math.random() * 10}s`
                     }}
                 >
-                    ❤️
+                    {i % 3 === 0 ? '♥' : i % 3 === 1 ? '❦' : '✿'}
                 </div>
             ))}
         </div>

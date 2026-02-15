@@ -114,39 +114,42 @@ export default function Send() {
     }
   };
 
+  // Pre-question screen
   if (!hasAnsweredYes) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-4 overflow-hidden relative">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden relative">
         <Navigation />
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="text-center z-10"
         >
           <div className="mb-8">
             <img
               src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif"
               alt="Cute bear"
-              className="w-48 h-48 mx-auto rounded-full object-cover border-4 border-white shadow-xl"
+              className="w-48 h-48 mx-auto rounded-lg object-cover border-2 border-burgundy/10 shadow-lg"
+              style={{ boxShadow: '0 8px 24px rgba(60, 20, 10, 0.15)' }}
             />
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold text-ink mb-2">Got something to say?</h1>
-          <p className="text-xl text-ink-light mb-12">Go ahead, we're listening... 👀</p>
+          <h1 className="text-4xl md:text-6xl font-display font-semibold text-ink mb-2">Got something to say?</h1>
+          <p className="text-xl font-body text-ink-light mb-12 italic">Go ahead, we're listening... 👀</p>
 
           <div className="flex items-center justify-center gap-8 relative h-20">
             <CutesyButton onClick={handleYes}>
               Yes <Heart className="inline w-5 h-5 ml-2 fill-current" />
             </CutesyButton>
 
-            <DodgingButton className="bg-white text-ink hover:bg-stone-100">
+            <DodgingButton className="bg-parchment-warm text-ink hover:bg-parchment-aged">
               No
             </DodgingButton>
           </div>
 
-          <p className="mt-10 text-xs text-stone-400 italic">
+          <p className="mt-10 text-xs text-ink-light/60 font-body italic">
             By continuing, you agree to our{" "}
-            <Link href="/terms" className="underline hover:text-primary transition-colors">
+            <Link href="/terms" className="underline hover:text-burgundy transition-colors duration-300">
               Terms & Privacy Policy
             </Link>
           </p>
@@ -155,19 +158,21 @@ export default function Send() {
     );
   }
 
+  // Not authenticated
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
         <Navigation />
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
           className="max-w-md w-full glass-card p-12 relative"
         >
-          <div className="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <UserPlus className="w-8 h-8 text-rose-600" />
+          <div className="w-20 h-20 bg-blush-light/30 rounded-full flex items-center justify-center mx-auto mb-6">
+            <UserPlus className="w-8 h-8 text-burgundy" />
           </div>
-          <h2 className="text-3xl font-display mb-4 font-bold text-ink">Create an account first! 💕</h2>
+          <h2 className="text-3xl font-display mb-4 font-semibold text-ink">Create an account first! <span className="font-script">💕</span></h2>
           <p className="font-body text-ink-light mb-8">
             You need an account to send confessions. It only takes a minute!
           </p>
@@ -181,21 +186,23 @@ export default function Send() {
     );
   }
 
+  // Success
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
         <Navigation />
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
           className="max-w-md w-full glass-card p-12 relative"
         >
-          <div className="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-            <SendIcon className="w-8 h-8 text-rose-600" />
+          <div className="w-20 h-20 bg-blush-light/30 rounded-full flex items-center justify-center mx-auto mb-6 animate-breathe">
+            <SendIcon className="w-8 h-8 text-burgundy" />
           </div>
-          <h2 className="text-4xl font-display mb-4 font-bold text-ink">Sent with love!</h2>
+          <h2 className="text-4xl font-display mb-4 font-semibold text-ink">Sent with love!</h2>
           <p className="font-body text-ink-light mb-8">
-            Your message has been delivered to {ADMIN_PROFILE.displayName}.
+            Your message has been delivered to <span className="font-script text-burgundy">{ADMIN_PROFILE.displayName}</span>.
           </p>
           <button
             onClick={() => {
@@ -209,7 +216,7 @@ export default function Send() {
               setRecipientInstagram("");
               setGenderPreference(null);
             }}
-            className="text-sm font-ui uppercase tracking-widest border-b-2 border-primary pb-1 text-primary hover:text-primary/80 transition-colors font-bold"
+            className="text-sm font-ui uppercase tracking-widest border-b-2 border-burgundy pb-1 text-burgundy hover:text-burgundy-dark transition-colors duration-300 font-bold"
           >
             Send another
           </button>
@@ -218,19 +225,20 @@ export default function Send() {
     );
   }
 
+  // Main form
   return (
-    <div className="min-h-screen bg-transparent pb-20">
+    <div className="min-h-screen pb-20">
       <Navigation />
-      {/* Header */}
       <header className="pt-12 pb-8 px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          <span className="block text-xs font-ui font-bold uppercase tracking-widest text-primary mb-2">
+          <span className="block text-xs font-ui font-bold uppercase tracking-widest text-burgundy mb-2">
             Yay! You said yes!
           </span>
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-ink">Send a Message to {ADMIN_PROFILE.displayName}</h1>
+          <h1 className="text-4xl md:text-5xl font-display font-semibold text-ink">Send a Message to <span className="font-script text-burgundy">{ADMIN_PROFILE.displayName}</span></h1>
         </motion.div>
       </header>
 
@@ -241,70 +249,70 @@ export default function Send() {
             <button
               onClick={() => setActiveTab('confession')}
               className={cn(
-                "pb-2 text-lg font-bold transition-colors relative",
-                activeTab === 'confession' ? "text-primary" : "text-stone-400 hover:text-stone-600"
+                "pb-2 text-lg font-display font-semibold transition-colors duration-300 relative",
+                activeTab === 'confession' ? "text-burgundy" : "text-ink-light hover:text-ink"
               )}
             >
               Confession
               {activeTab === 'confession' && (
-                <motion.div layoutId="underline" className="absolute bottom-0 left-0 right-0 h-1 rounded-full bg-primary" />
+                <motion.div layoutId="underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-burgundy" />
               )}
             </button>
             <button
               onClick={() => setActiveTab('bouquet')}
               className={cn(
-                "pb-2 text-lg font-bold transition-colors relative",
-                activeTab === 'bouquet' ? "text-primary" : "text-stone-400 hover:text-stone-600"
+                "pb-2 text-lg font-display font-semibold transition-colors duration-300 relative",
+                activeTab === 'bouquet' ? "text-burgundy" : "text-ink-light hover:text-ink"
               )}
             >
               Send Flowers
               {activeTab === 'bouquet' && (
-                <motion.div layoutId="underline" className="absolute bottom-0 left-0 right-0 h-1 rounded-full bg-primary" />
+                <motion.div layoutId="underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-burgundy" />
               )}
             </button>
           </div>
 
           {/* Logged in as */}
-          <div className="mb-8 p-4 bg-gradient-to-r from-green-50/80 to-emerald-50/80 rounded-2xl border border-green-200/50 flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-rose-400 to-purple-400 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
+          <div className="mb-8 p-4 bg-parchment-aged/50 rounded-lg border border-burgundy/10 flex items-center gap-3">
+            <div className="w-10 h-10 bg-burgundy rounded-full flex items-center justify-center text-sm font-bold text-parchment flex-shrink-0 font-display">
               {user!.fullName.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-ink text-sm truncate">{user!.fullName}</p>
-              <p className="text-xs text-pink-500 font-bold">@{user!.instagramUsername}</p>
+              <p className="font-bold text-ink text-sm font-body truncate">{user!.fullName}</p>
+              <p className="text-xs text-burgundy font-bold font-ui">@{user!.instagramUsername}</p>
             </div>
-            <span className="text-[10px] text-green-600 font-bold uppercase tracking-widest">✅ Verified</span>
+            <span className="text-[10px] text-accent font-bold uppercase tracking-widest font-ui">✅ Verified</span>
           </div>
 
           {/* Date Preference */}
-          <div className="mb-8 p-5 bg-amber-50/50 rounded-2xl border border-amber-200/50">
-            <label className="block text-xs font-ui font-bold uppercase tracking-widest text-amber-600 mb-3 ml-1">
+          <div className="mb-8 p-5 bg-parchment/70 rounded-lg border border-burgundy/10">
+            <label className="block text-xs font-ui font-bold uppercase tracking-widest text-accent mb-3 ml-1">
               🎯 Who do you want to go with?
             </label>
             <div className="grid grid-cols-2 gap-3 mb-4">
               <button
                 onClick={() => { setDatePreference('random'); setRecipientInstagram(''); }}
                 className={cn(
-                  "p-4 rounded-xl border-2 text-center transition-all font-bold",
+                  "p-4 rounded-lg border-2 text-center transition-all duration-300 font-display font-semibold",
                   datePreference === 'random'
-                    ? "border-amber-400 bg-amber-100 text-amber-700 shadow-md"
-                    : "border-stone-200 bg-white text-stone-500 hover:border-amber-300"
+                    ? "border-burgundy/40 bg-blush-light/30 text-burgundy-dark shadow-md"
+                    : "border-burgundy/10 bg-parchment-warm text-ink-light hover:border-burgundy/20"
                 )}
               >
                 🎲 Random
-                <span className="block text-[10px] font-normal mt-1">Surprise me!</span>
+                <span className="block text-[10px] font-body font-normal mt-1 text-ink-light">Surprise me!</span>
               </button>
               <button
                 onClick={() => setDatePreference('specific')}
                 className={cn(
-                  "p-4 rounded-xl border-2 text-center transition-all font-bold",
+                  "p-4 rounded-lg border-2 text-center transition-all duration-300 font-display font-semibold",
                   datePreference === 'specific'
-                    ? "border-amber-400 bg-amber-100 text-amber-700 shadow-md"
-                    : "border-stone-200 bg-white text-stone-500 hover:border-amber-300"
+                    ? "border-burgundy/40 bg-blush-light/30 text-burgundy-dark shadow-md"
+                    : "border-burgundy/10 bg-parchment-warm text-ink-light hover:border-burgundy/20"
                 )}
               >
                 💘 Someone Specific
-                <span className="block text-[10px] font-normal mt-1">I know who I want</span>
+                <span className="block text-[10px] font-body font-normal mt-1 text-ink-light">I know who I want</span>
               </button>
             </div>
 
@@ -312,30 +320,31 @@ export default function Send() {
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
+                transition={{ duration: 0.4 }}
                 className="space-y-3 mb-4"
               >
                 <div>
-                  <label className="block text-[10px] font-ui font-bold uppercase tracking-widest text-amber-500 mb-2 ml-1">
+                  <label className="block text-[10px] font-ui font-bold uppercase tracking-widest text-accent mb-2 ml-1">
                     Their Name
                   </label>
                   <input
                     value={recipientName}
                     onChange={(e) => setRecipientName(e.target.value)}
                     placeholder="Enter their name"
-                    className="w-full bg-white border-2 border-amber-200 rounded-xl p-3 text-ink outline-none focus:border-amber-400 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+                    className="w-full bg-parchment-warm border border-burgundy/15 rounded-lg p-3 text-ink outline-none focus:border-burgundy/40 transition-all duration-300 font-body placeholder:text-ink-light/40"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-ui font-bold uppercase tracking-widest text-amber-500 mb-2 ml-1">
+                  <label className="block text-[10px] font-ui font-bold uppercase tracking-widest text-accent mb-2 ml-1">
                     Their Instagram
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400 font-bold">@</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-burgundy/50 font-bold font-ui">@</span>
                     <input
                       value={recipientInstagram}
                       onChange={(e) => setRecipientInstagram(e.target.value.replace(/^@/, ''))}
                       placeholder="their_username"
-                      className="w-full bg-white border-2 border-amber-200 rounded-xl p-3 pl-8 text-ink outline-none focus:border-amber-400 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+                      className="w-full bg-parchment-warm border border-burgundy/15 rounded-lg p-3 pl-8 text-ink outline-none focus:border-burgundy/40 transition-all duration-300 font-body placeholder:text-ink-light/40"
                     />
                   </div>
                 </div>
@@ -343,7 +352,7 @@ export default function Send() {
             )}
 
             {/* Gender Preference */}
-            <label className="block text-[10px] font-ui font-bold uppercase tracking-widest text-amber-500 mb-2 ml-1 mt-4">
+            <label className="block text-[10px] font-ui font-bold uppercase tracking-widest text-accent mb-2 ml-1 mt-4">
               Preferred Gender
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -356,10 +365,10 @@ export default function Send() {
                   key={g.id}
                   onClick={() => setGenderPreference(g.id)}
                   className={cn(
-                    "p-3 rounded-xl border-2 text-center text-sm transition-all font-bold",
+                    "p-3 rounded-lg border text-center text-sm transition-all duration-300 font-display font-medium",
                     genderPreference === g.id
-                      ? "border-amber-400 bg-amber-100 text-amber-700 shadow-md"
-                      : "border-stone-200 bg-white text-stone-500 hover:border-amber-300"
+                      ? "border-burgundy/40 bg-blush-light/30 text-burgundy-dark shadow-sm"
+                      : "border-burgundy/10 bg-parchment-warm text-ink-light hover:border-burgundy/20"
                   )}
                 >
                   {g.label}
@@ -375,12 +384,12 @@ export default function Send() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
                 className="space-y-8"
               >
                 <div>
-                  <label className="block text-xs font-ui font-bold uppercase tracking-widest text-stone-500 mb-4 ml-1">
-                    What's the vibe? (Optional)
+                  <label className="block text-xs font-ui font-bold uppercase tracking-widest text-ink-light mb-4 ml-1">
+                    What's the vibe? <span className="font-normal lowercase italic">(Optional)</span>
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {VIBES.map((vibe) => (
@@ -396,14 +405,14 @@ export default function Send() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-ui font-bold uppercase tracking-widest text-stone-500 mb-2 ml-1">
+                  <label className="block text-xs font-ui font-bold uppercase tracking-widest text-ink-light mb-2 ml-1">
                     Your Message
                   </label>
                   <textarea
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="Write something honest..."
-                    className="w-full min-h-[200px] input-dotted bg-white/50 text-xl text-ink leading-8 outline-none focus:border-primary resize-y"
+                    className="w-full min-h-[200px] bg-parchment border border-burgundy/15 rounded-lg px-4 py-3 text-lg text-ink font-body leading-8 outline-none focus:border-burgundy/30 transition-all duration-300 resize-y placeholder:text-ink-light/40 placeholder:italic"
                   />
                 </div>
               </motion.div>
@@ -413,7 +422,7 @@ export default function Send() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
                 className="space-y-8"
               >
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -427,15 +436,15 @@ export default function Send() {
                   ))}
                 </div>
 
-                <div className="bg-white/50 p-6 rounded-xl border-2 border-dotted border-stone-200">
-                  <label className="block text-xs font-ui font-bold uppercase tracking-widest text-stone-500 mb-3">
+                <div className="bg-parchment/70 p-6 rounded-lg border border-burgundy/10">
+                  <label className="block text-xs font-ui font-bold uppercase tracking-widest text-ink-light mb-3">
                     Attach a note
                   </label>
                   <input
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     placeholder="Just for you..."
-                    className="w-full bg-transparent border-b-2 border-stone-200 focus:border-primary outline-none py-2 font-body text-lg"
+                    className="w-full bg-transparent border-b-2 border-burgundy/15 focus:border-burgundy/40 outline-none py-2 font-body text-lg transition-colors duration-300 placeholder:text-ink-light/40 placeholder:italic"
                   />
                 </div>
               </motion.div>
@@ -452,10 +461,9 @@ export default function Send() {
                 <Loader2 className="w-6 h-6 animate-spin mx-auto" />
               ) : (
                 <><Sparkles className="w-5 h-5 mr-2 inline" />Seal & Send</>
-
               )}
             </CutesyButton>
-            <p className="text-center mt-4 text-xs font-ui text-stone-400">
+            <p className="text-center mt-4 text-xs font-ui text-ink-light/60">
               Messages are anonymous and only visible to {ADMIN_PROFILE.displayName}.
             </p>
           </div>

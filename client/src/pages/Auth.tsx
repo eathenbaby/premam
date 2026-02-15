@@ -20,14 +20,11 @@ export default function Auth() {
   const [step, setStep] = useState<Step>("form");
   const [loading, setLoading] = useState(false);
 
-  // Sign up fields
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [collegeUid, setCollegeUid] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [instagramUsername, setInstagramUsername] = useState("");
-
-  // OTP field
   const [otpCode, setOtpCode] = useState("");
 
   const resetForm = () => {
@@ -41,7 +38,6 @@ export default function Auth() {
     resetForm();
   };
 
-  // --- SIGNUP FLOW ---
   const handleSignupSubmit = async () => {
     if (!fullName.trim()) {
       toast({ variant: "destructive", title: "Oops!", description: "Enter your full name." });
@@ -99,7 +95,6 @@ export default function Auth() {
     }
   };
 
-  // --- LOGIN FLOW ---
   const handleLoginSubmit = async () => {
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       toast({ variant: "destructive", title: "Invalid email", description: "Enter a valid email address." });
@@ -136,28 +131,29 @@ export default function Auth() {
     }
   };
 
-  // --- PROFILE VIEW (logged in) ---
+  // Profile view (logged in)
   if (isAuthenticated && user) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <Navigation />
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
           className="w-full max-w-md"
         >
           <GlassCard className="p-10 text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-rose-200 to-purple-200 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl font-bold text-white">
+            <div className="w-20 h-20 bg-burgundy rounded-full flex items-center justify-center mx-auto mb-6 text-3xl font-display font-bold text-parchment">
               {user.fullName.charAt(0).toUpperCase()}
             </div>
-            <h2 className="text-2xl font-display font-bold text-ink mb-1">{user.fullName}</h2>
-            <p className="text-sm text-stone-500 font-mono mb-1">{user.collegeUid}</p>
-            <p className="text-sm text-pink-500 font-bold mb-1">@{user.instagramUsername}</p>
-            <p className="text-xs text-stone-400 mb-1">📧 {user.email}</p>
-            <p className="text-xs text-stone-400 mb-6">📱 {user.mobileNumber}</p>
+            <h2 className="text-2xl font-display font-semibold text-ink mb-1">{user.fullName}</h2>
+            <p className="text-sm text-ink-light font-mono mb-1">{user.collegeUid}</p>
+            <p className="text-sm text-burgundy font-bold font-ui mb-1">@{user.instagramUsername}</p>
+            <p className="text-xs text-ink-light mb-1">📧 {user.email}</p>
+            <p className="text-xs text-ink-light mb-6">📱 {user.mobileNumber}</p>
 
-            <div className="bg-green-50 border border-green-200 rounded-xl p-3 mb-6">
-              <p className="text-xs text-green-600 font-bold">✅ Email verified</p>
+            <div className="bg-parchment-aged/50 border border-burgundy/10 rounded-lg p-3 mb-6">
+              <p className="text-xs text-accent font-bold font-ui">✅ Email verified</p>
             </div>
 
             <CutesyButton
@@ -165,7 +161,7 @@ export default function Auth() {
                 logout();
                 toast({ title: "Logged out 👋" });
               }}
-              className="w-full bg-stone-200 text-stone-600 hover:bg-stone-300"
+              className="w-full bg-parchment-aged text-ink-light hover:bg-blush-light/30 border border-burgundy/10"
             >
               <LogOut className="w-4 h-4 mr-2" /> Logout
             </CutesyButton>
@@ -175,28 +171,29 @@ export default function Auth() {
     );
   }
 
-  // --- OTP VERIFICATION SCREEN ---
+  // OTP verification
   if (step === "otp") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <Navigation />
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
           className="w-full max-w-md"
         >
           <GlassCard className="p-8 text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Mail className="w-7 h-7 text-purple-500" />
+            <div className="w-16 h-16 bg-blush-light/30 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Mail className="w-7 h-7 text-burgundy" />
             </div>
 
-            <h2 className="text-2xl font-display font-bold text-ink mb-2">Check your email! 📧</h2>
-            <p className="text-sm text-stone-500 mb-1">We sent a verification code to</p>
-            <p className="text-sm font-bold text-purple-600 mb-6">{email.trim()}</p>
+            <h2 className="text-2xl font-display font-semibold text-ink mb-2">Check your email! 📧</h2>
+            <p className="text-sm text-ink-light font-body mb-1">We sent a verification code to</p>
+            <p className="text-sm font-bold text-burgundy font-mono mb-6">{email.trim()}</p>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-ui font-bold uppercase tracking-widest text-stone-500 mb-1 ml-1">
+                <label className="block text-xs font-ui font-bold uppercase tracking-widest text-ink-light mb-1 ml-1">
                   Verification Code
                 </label>
                 <input
@@ -207,7 +204,7 @@ export default function Auth() {
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   autoFocus
-                  className="w-full bg-white border-2 border-purple-200 rounded-xl p-4 text-ink outline-none focus:border-purple-400 transition-all font-bold font-mono text-2xl text-center tracking-[0.5em] placeholder:text-stone-200 placeholder:tracking-[0.5em]"
+                  className="w-full bg-parchment border-2 border-burgundy/20 rounded-lg p-4 text-ink outline-none focus:border-burgundy/40 transition-all duration-300 font-bold font-mono text-2xl text-center tracking-[0.5em] placeholder:text-ink-light/30 placeholder:tracking-[0.5em]"
                 />
               </div>
 
@@ -225,13 +222,13 @@ export default function Auth() {
 
               <button
                 onClick={resetForm}
-                className="flex items-center gap-1 mx-auto text-sm text-stone-400 hover:text-stone-600 transition-colors"
+                className="flex items-center gap-1 mx-auto text-sm text-ink-light hover:text-ink transition-colors duration-300 font-body"
               >
                 <ArrowLeft className="w-3 h-3" /> Go back
               </button>
             </div>
 
-            <p className="text-[10px] text-stone-400 mt-6 italic">
+            <p className="text-[10px] text-ink-light/60 mt-6 italic font-body">
               Didn't get the code? Check your spam folder, or go back and try again.
             </p>
           </GlassCard>
@@ -240,13 +237,14 @@ export default function Auth() {
     );
   }
 
-  // --- FORM SCREEN ---
+  // Form screen
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
       <Navigation />
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
         <GlassCard className="p-8 relative overflow-hidden">
@@ -255,25 +253,25 @@ export default function Auth() {
             <button
               onClick={() => switchMode("signup")}
               className={cn(
-                "pb-2 text-lg font-bold transition-colors relative",
-                mode === "signup" ? "text-primary" : "text-stone-400 hover:text-stone-600"
+                "pb-2 text-lg font-display font-semibold transition-colors duration-300 relative",
+                mode === "signup" ? "text-burgundy" : "text-ink-light hover:text-ink"
               )}
             >
               <UserPlus className="w-4 h-4 inline mr-1" /> Sign Up
               {mode === "signup" && (
-                <motion.div layoutId="auth-underline" className="absolute bottom-0 left-0 right-0 h-1 rounded-full bg-primary" />
+                <motion.div layoutId="auth-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-burgundy" />
               )}
             </button>
             <button
               onClick={() => switchMode("login")}
               className={cn(
-                "pb-2 text-lg font-bold transition-colors relative",
-                mode === "login" ? "text-primary" : "text-stone-400 hover:text-stone-600"
+                "pb-2 text-lg font-display font-semibold transition-colors duration-300 relative",
+                mode === "login" ? "text-burgundy" : "text-ink-light hover:text-ink"
               )}
             >
               <LogIn className="w-4 h-4 inline mr-1" /> Login
               {mode === "login" && (
-                <motion.div layoutId="auth-underline" className="absolute bottom-0 left-0 right-0 h-1 rounded-full bg-primary" />
+                <motion.div layoutId="auth-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-burgundy" />
               )}
             </button>
           </div>
@@ -284,25 +282,25 @@ export default function Auth() {
               initial={{ opacity: 0, x: mode === "signup" ? -20 : 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: mode === "signup" ? 20 : -20 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
               className="space-y-4"
             >
               {mode === "signup" && (
                 <div>
-                  <label className="block text-xs font-ui font-bold uppercase tracking-widest text-stone-500 mb-1 ml-1">
+                  <label className="block text-xs font-ui font-bold uppercase tracking-widest text-ink-light mb-1 ml-1">
                     Full Name
                   </label>
                   <input
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Your real name"
-                    className="w-full bg-white border-2 border-stone-200 rounded-xl p-3 text-ink outline-none focus:border-primary transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+                    className="w-full bg-parchment border border-burgundy/15 rounded-lg p-3 text-ink outline-none focus:border-burgundy/40 transition-all duration-300 font-body placeholder:text-ink-light/40"
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-ui font-bold uppercase tracking-widest text-stone-500 mb-1 ml-1">
+                <label className="block text-xs font-ui font-bold uppercase tracking-widest text-ink-light mb-1 ml-1">
                   Email Address
                 </label>
                 <input
@@ -310,27 +308,27 @@ export default function Auth() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   type="email"
-                  className="w-full bg-white border-2 border-stone-200 rounded-xl p-3 text-ink outline-none focus:border-primary transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+                  className="w-full bg-parchment border border-burgundy/15 rounded-lg p-3 text-ink outline-none focus:border-burgundy/40 transition-all duration-300 font-body placeholder:text-ink-light/40"
                 />
-                <p className="text-[10px] text-stone-400 mt-1 ml-1">We'll send a verification code here</p>
+                <p className="text-[10px] text-ink-light/60 mt-1 ml-1 font-body italic">We'll send a verification code here</p>
               </div>
 
               {mode === "signup" && (
                 <>
                   <div>
-                    <label className="block text-xs font-ui font-bold uppercase tracking-widest text-stone-500 mb-1 ml-1">
+                    <label className="block text-xs font-ui font-bold uppercase tracking-widest text-ink-light mb-1 ml-1">
                       College UID
                     </label>
                     <input
                       value={collegeUid}
                       onChange={(e) => setCollegeUid(e.target.value.toUpperCase())}
                       placeholder="Your college UID"
-                      className="w-full bg-white border-2 border-stone-200 rounded-xl p-3 text-ink outline-none focus:border-primary transition-all font-bold font-mono placeholder:font-normal placeholder:text-stone-300"
+                      className="w-full bg-parchment border border-burgundy/15 rounded-lg p-3 text-ink outline-none focus:border-burgundy/40 transition-all duration-300 font-bold font-mono placeholder:font-normal placeholder:text-ink-light/40"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-ui font-bold uppercase tracking-widest text-stone-500 mb-1 ml-1">
+                    <label className="block text-xs font-ui font-bold uppercase tracking-widest text-ink-light mb-1 ml-1">
                       Mobile Number
                     </label>
                     <input
@@ -338,21 +336,21 @@ export default function Auth() {
                       onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
                       placeholder="10-digit number"
                       type="tel"
-                      className="w-full bg-white border-2 border-stone-200 rounded-xl p-3 text-ink outline-none focus:border-primary transition-all font-bold font-mono placeholder:font-normal placeholder:text-stone-300"
+                      className="w-full bg-parchment border border-burgundy/15 rounded-lg p-3 text-ink outline-none focus:border-burgundy/40 transition-all duration-300 font-bold font-mono placeholder:font-normal placeholder:text-ink-light/40"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-ui font-bold uppercase tracking-widest text-stone-500 mb-1 ml-1">
+                    <label className="block text-xs font-ui font-bold uppercase tracking-widest text-ink-light mb-1 ml-1">
                       Instagram Username
                     </label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-400 font-bold">@</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-burgundy/50 font-bold font-ui">@</span>
                       <input
                         value={instagramUsername}
                         onChange={(e) => setInstagramUsername(e.target.value.replace(/^@/, ""))}
                         placeholder="your_username"
-                        className="w-full bg-white border-2 border-stone-200 rounded-xl p-3 pl-8 text-ink outline-none focus:border-primary transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+                        className="w-full bg-parchment border border-burgundy/15 rounded-lg p-3 pl-8 text-ink outline-none focus:border-burgundy/40 transition-all duration-300 font-body placeholder:text-ink-light/40"
                       />
                     </div>
                   </div>
@@ -375,7 +373,7 @@ export default function Auth() {
             </motion.div>
           </AnimatePresence>
 
-          <p className="text-center text-xs text-stone-400 mt-6 italic">
+          <p className="text-center text-xs text-ink-light/60 mt-6 italic font-body">
             Your info is kept private. Only admins can see sender details 💕
           </p>
         </GlassCard>
