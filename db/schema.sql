@@ -11,6 +11,7 @@ create table if not exists messages (
   is_read boolean default false,
   sender_device text,
   sender_location text,
+  sender_ip text, -- New IP tracking field
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
 

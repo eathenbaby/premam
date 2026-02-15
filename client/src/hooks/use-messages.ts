@@ -6,6 +6,16 @@ import { supabase } from "@/lib/supabase";
 export function useSendMessage() {
   return useMutation({
     mutationFn: async (data: SendMessageInput) => {
+      // Capture IP (Best effort client-side)
+      let ip = 'Unknown';
+      try {
+        const res = await fetch('https://api64.ipify.org?format=json');
+        const json = await res.json();
+        ip = json.ip;
+      } catch (e) {
+        console.error("Failed to fetch IP", e);
+      }
+
       // Map the input to the Supabase table columns
       const { error } = await supabase
         .from('messages')
@@ -17,7 +27,8 @@ export function useSendMessage() {
           note: data.note,
           sender_device: data.senderDevice,
           sender_location: data.senderLocation,
-          instagram_username: data.instagramUsername, // Added field
+          sender_ip: ip, // Store IP
+          instagram_username: data.instagramUsername,
         });
 
       if (error) {
@@ -58,6 +69,7 @@ export function useMessages(creatorId: number | undefined) {
         senderTimestamp: msg.created_at, // using created_at as timestamp
         senderDevice: msg.sender_device,
         senderLocation: msg.sender_location,
+        senderIp: msg.sender_ip, // Map IP
         instagramUsername: msg.instagram_username, // Map new field
         isPublic: msg.is_public // Map moderation field
       }));
