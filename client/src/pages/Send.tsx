@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useSendMessage } from "@/hooks/use-messages";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Send as SendIcon, Heart, CheckCircle, XCircle } from "lucide-react";
+import { Loader2, Send as SendIcon, Heart, CheckCircle, XCircle, Sparkles } from "lucide-react";
+import { Link } from "wouter";
 import { VibeCard } from "@/components/VibeCard";
 import { FlowerCard } from "@/components/FlowerCard";
 import { cn } from "@/lib/utils";
@@ -172,6 +173,13 @@ export default function Send() {
               No
             </DodgingButton>
           </div>
+
+          <p className="mt-10 text-xs text-stone-400 italic">
+            By continuing, you agree to our{" "}
+            <Link href="/terms" className="underline hover:text-primary transition-colors">
+              Terms & Privacy Policy
+            </Link>
+          </p>
         </motion.div>
       </div>
     );
@@ -325,6 +333,9 @@ export default function Send() {
             <p className="text-[10px] text-pink-400 mt-3 ml-1 italic">
               * Only we can see this. Your confession stays anonymous to everyone else 💕
             </p>
+            <p className="text-[10px] text-stone-400 mt-1 ml-1 italic">
+              * Only real Instagram accounts are approved. Fake handles will be rejected.
+            </p>
           </div>
 
           <AnimatePresence mode="wait">
@@ -410,7 +421,8 @@ export default function Send() {
               {sendMessage.isPending ? (
                 <Loader2 className="w-6 h-6 animate-spin mx-auto" />
               ) : (
-                "Seal & Send"
+                <><Sparkles className="w-5 h-5 mr-2 inline" />Seal & Send</>
+
               )}
             </CutesyButton>
             {!instagramVerified && (

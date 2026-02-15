@@ -8,6 +8,7 @@ import Home from "@/pages/Home";
 import Send from "@/pages/Send";
 import Feed from "@/pages/Feed";
 import Inbox from "@/pages/Inbox";
+import Terms from "@/pages/Terms";
 import { FloatingHearts } from "@/components/InteractiveComponents";
 
 function Router() {
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/" component={Send} />
       <Route path="/feed" component={Feed} />
       <Route path="/inbox" component={Inbox} />
+      <Route path="/terms" component={Terms} />
       <Route component={NotFound} />
     </Switch>
   );
