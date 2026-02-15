@@ -116,7 +116,6 @@ export default function Home() {
                     slug: data.slug,
                     passcode: data.passcode,
                     createdAt: new Date(),
-                    updatedAt: new Date(),
                   });
                 })(e);
               }} className="space-y-6">

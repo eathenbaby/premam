@@ -141,6 +141,7 @@ export async function registerRoutes(
     await storage.createMessage({
       creatorId: demo.id,
       type: "confession",
+      instagramUsername: "demo_user",
       vibe: "coffee",
       content: "I've seen you at the library every Tuesday. Want to grab a coffee sometime?",
       senderDevice: "iPhone 15",
@@ -150,6 +151,7 @@ export async function registerRoutes(
     await storage.createMessage({
       creatorId: demo.id,
       type: "bouquet",
+      instagramUsername: "demo_user",
       bouquetId: "bouquet-01",
       note: "For the most beautiful person I know.",
       senderDevice: "Pixel 8",

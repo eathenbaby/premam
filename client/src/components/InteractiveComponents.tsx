@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-interface CutesyButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface CutesyButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag' | 'onDragStart' | 'onDragEnd' | 'onAnimationStart'> {
     children: React.ReactNode;
     variant?: "primary" | "secondary";
     onClick?: () => void;

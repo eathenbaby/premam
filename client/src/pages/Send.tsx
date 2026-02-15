@@ -57,6 +57,7 @@ export default function Send() {
   const [selectedVibe, setSelectedVibe] = useState<string | null>(null);
   const [selectedBouquet, setSelectedBouquet] = useState<string | null>(null);
   const [content, setContent] = useState("");
+  const [instagramUsername, setInstagramUsername] = useState("");
   const [note, setNote] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -80,6 +81,7 @@ export default function Send() {
       await sendMessage.mutateAsync({
         creatorId: ADMIN_PROFILE.id,
         type: activeTab,
+        instagramUsername,
         vibe: activeTab === 'confession' ? selectedVibe : null,
         content: activeTab === 'confession' ? content : null,
         bouquetId: activeTab === 'bouquet' ? selectedBouquet : null,
