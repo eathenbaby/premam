@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Shield, Eye, EyeOff, Server, Heart, AlertTriangle, Scale, ArrowLeft } from "lucide-react";
+import { Shield, Eye, EyeOff, Heart, AlertTriangle, Scale, ArrowLeft, MessageCircle } from "lucide-react";
 import { Link } from "wouter";
 import { GlassCard } from "@/components/InteractiveComponents";
 import { Navigation } from "@/components/Navigation";
@@ -42,22 +42,33 @@ export default function Terms() {
       <main className="max-w-2xl mx-auto px-4">
         <Section icon={Heart} title="What is Premam?">
           <p>
-            Premam Confessions is a fun, anonymous confession and digital bouquet platform. You can send heartfelt
-            messages and flowers to someone special — and your identity stays hidden from the public. 💌
+            Premam Confessions is a fun, anonymous platform where you can share honest confessions, kind words, 
+            compliments, and digital bouquets with people you appreciate. 💌
           </p>
           <p>
-            Think of it as a digital love letter box. Messages may appear on the public feed once approved by admins,
-            but <strong>your identity is never shown publicly</strong>.
+            Whether it's a friend you admire, someone who made your day, or just something you've been meaning 
+            to say — this is your safe space to express it. Messages may appear on the public feed once approved 
+            by admins, but <strong>your identity is never shown publicly</strong>.
           </p>
         </Section>
 
+        <Section icon={MessageCircle} title="How It Works">
+          <p>It's simple:</p>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li>Verify your Instagram username (so we know you're real)</li>
+            <li>Tell us who your message is for</li>
+            <li>Write your confession or pick a bouquet</li>
+            <li>Hit send — your message goes to our admins for review</li>
+            <li>If approved, it appears on the public feed (without your identity)</li>
+          </ul>
+        </Section>
+
         <Section icon={Eye} title="What We Collect">
-          <p>When you send a message, we collect the following information:</p>
+          <p>When you send a message, we collect:</p>
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li><strong>Instagram username</strong> — to verify you're a real person</li>
-            <li><strong>Device information</strong> — your browser/user agent string</li>
-            <li><strong>IP address</strong> — logged automatically by our servers</li>
             <li><strong>Message content</strong> — what you write or the bouquet you choose</li>
+            <li><strong>Recipient name</strong> — who the message is for</li>
           </ul>
           <p className="text-xs italic text-pink-400 mt-2">
             We only collect what's needed to keep the platform safe and fun. No unnecessary tracking! 🍪✖️
@@ -81,51 +92,47 @@ export default function Terms() {
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li>Approve messages to appear on the public feed</li>
             <li>Reject or delete messages that are inappropriate, harmful, or violate community standards</li>
-            <li>Verify that Instagram accounts are real (fake handles will be rejected)</li>
+            <li>Verify that Instagram accounts are real — <strong>fake handles will be rejected</strong></li>
           </ul>
           <p>
-            We reserve the right to remove any content at our sole discretion. Be kind! 🌸
+            We reserve the right to remove any content at our sole discretion. Keep it respectful! 🌸
           </p>
         </Section>
 
-        <Section icon={Server} title="Data Storage & Security">
+        <Section icon={AlertTriangle} title="Community Guidelines">
+          <p>Premam is a space for positivity. Please:</p>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li>Be kind and respectful in your messages</li>
+            <li>Don't send hateful, threatening, or harassing content</li>
+            <li>Don't impersonate others or use fake accounts</li>
+            <li>Don't share anyone's private information</li>
+          </ul>
           <p>
-            Your data is stored securely using <strong>Supabase</strong> (hosted on trusted cloud infrastructure).
-            We take reasonable measures to protect your information, but no system is 100% secure.
-          </p>
-          <p>
-            Messages and associated data may be retained indefinitely or deleted at admin discretion.
+            Messages that violate these guidelines will be rejected and repeat offenders may be blocked.
           </p>
         </Section>
 
-        <Section icon={AlertTriangle} title="Disclaimers">
+        <Section icon={Scale} title="Disclaimers">
           <p>
             Premam Confessions is provided <strong>"as is"</strong> without warranties of any kind. We are not liable for:
           </p>
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li>Content submitted by users</li>
-            <li>Any emotional distress caused by messages received</li>
+            <li>Any emotional impact caused by messages received</li>
             <li>Service interruptions or data loss</li>
-            <li>Actions taken based on information shared on the platform</li>
           </ul>
-          <p className="text-xs italic text-pink-400 mt-2">
-            Use this platform responsibly and spread love, not hate. 💕
-          </p>
-        </Section>
-
-        <Section icon={Scale} title="Changes to These Terms">
           <p>
             We may update these terms from time to time. Continued use of Premam Confessions after changes
             constitutes acceptance of the updated terms.
           </p>
-          <p>
-            Questions? Reach out to the admins. We're friendly, we promise! 😊
+          <p className="text-xs italic text-pink-400 mt-2">
+            Use this platform responsibly and spread kindness 💕
           </p>
         </Section>
 
         <div className="text-center mt-8">
           <p className="text-xs text-stone-400 font-ui">Last updated: February 2026</p>
-          <p className="text-xs text-stone-400 font-ui mt-1">Made with 💕 by the Premam team</p>
+          <p className="text-xs text-stone-400 font-ui mt-1">Made with 💕 by <strong>Parotta Labs</strong></p>
         </div>
       </main>
     </div>

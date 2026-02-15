@@ -28,12 +28,12 @@ const FLOWERS = [
 ];
 
 const VIBES = [
-  { id: "coffee", label: "Coffee Date" },
-  { id: "dinner", label: "Dinner" },
-  { id: "talk", label: "Just Talk" },
-  { id: "adventure", label: "Adventure" },
-  { id: "romance", label: "Romance" },
-  { id: "friends", label: "Friendship" },
+  { id: "chai", label: "Chai Date ☕" },
+  { id: "movie", label: "Movie Time 🎬" },
+  { id: "brunch", label: "Brunch 🥞" },
+  { id: "walk", label: "A Walk 🌿" },
+  { id: "arcade", label: "Arcade Date 🕹️" },
+  { id: "study", label: "Study Date 📚" },
 ];
 
 const ADMIN_PROFILE = {
@@ -78,6 +78,7 @@ export default function Send() {
   const [instagramVerified, setInstagramVerified] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [verificationFailed, setVerificationFailed] = useState(false);
+  const [recipientName, setRecipientName] = useState("");
   const [note, setNote] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -111,6 +112,10 @@ export default function Send() {
       toast({ variant: "destructive", title: "Hold up! 🤚", description: "You need to verify your Instagram handle before sending." });
       return;
     }
+    if (!recipientName.trim()) {
+      toast({ variant: "destructive", title: "Wait! 💌", description: "Tell us who this confession is for!" });
+      return;
+    }
     if (activeTab === 'confession' && !content) {
       toast({ variant: "destructive", title: "Wait!", description: "Please write a message first." });
       return;
@@ -125,6 +130,7 @@ export default function Send() {
         creatorId: ADMIN_PROFILE.id,
         type: activeTab,
         instagramUsername,
+        recipientName: recipientName.trim(),
         vibe: activeTab === 'confession' ? selectedVibe : null,
         content: activeTab === 'confession' ? content : null,
         bouquetId: activeTab === 'bouquet' ? selectedBouquet : null,
@@ -161,8 +167,8 @@ export default function Send() {
             />
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold text-ink mb-2">Do you love us?</h1>
-          <p className="text-xl text-ink-light mb-12">Be honest... 👀</p>
+          <h1 className="text-4xl md:text-6xl font-bold text-ink mb-2">Got something to say?</h1>
+          <p className="text-xl text-ink-light mb-12">Go ahead, we're listening... 👀</p>
 
           <div className="flex items-center justify-center gap-8 relative h-20">
             <CutesyButton onClick={handleYes}>
@@ -211,6 +217,7 @@ export default function Send() {
               setInstagramUsername("");
               setInstagramVerified(false);
               setVerificationFailed(false);
+              setRecipientName("");
             }}
             className="text-sm font-ui uppercase tracking-widest border-b-2 border-primary pb-1 text-primary hover:text-primary/80 transition-colors font-bold"
           >
@@ -335,6 +342,22 @@ export default function Send() {
             </p>
             <p className="text-[10px] text-stone-400 mt-1 ml-1 italic">
               * Only real Instagram accounts are approved. Fake handles will be rejected.
+            </p>
+          </div>
+
+          {/* Who is this for? */}
+          <div className="mb-8 p-5 bg-purple-50/50 rounded-2xl border border-purple-200/50">
+            <label className="block text-xs font-ui font-bold uppercase tracking-widest text-purple-600 mb-3 ml-1">
+              💌 Who is this for?
+            </label>
+            <input
+              value={recipientName}
+              onChange={(e) => setRecipientName(e.target.value)}
+              placeholder="Enter their name (e.g. Eathen, Ajmal, Joshy)"
+              className="w-full bg-white border-2 border-purple-200 rounded-xl p-3 text-ink outline-none focus:border-purple-400 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+            />
+            <p className="text-[10px] text-purple-400 mt-2 ml-1 italic">
+              * So we know who you're confessing to 💜
             </p>
           </div>
 

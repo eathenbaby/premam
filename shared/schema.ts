@@ -34,6 +34,7 @@ export const messages = pgTable("messages", {
 
   // NGL-style Requirement
   instagramUsername: text("instagram_username").notNull(),
+  recipientName: text("recipient_name"), // Who is this confession for?
 
   isRead: boolean("is_read").default(false),
   isArchived: boolean("is_archived").default(false),
@@ -57,6 +58,7 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   senderDevice: true,
   senderLocation: true,
   instagramUsername: true,
+  recipientName: true,
 });
 
 

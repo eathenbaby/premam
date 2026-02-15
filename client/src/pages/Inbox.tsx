@@ -43,6 +43,7 @@ const MOCK_MESSAGES = [
     isRead: false,
     isPublic: false,
     instagramUsername: "secret_admirer",
+    recipientName: "Eathen",
     createdAt: new Date(),
     senderTimestamp: new Date().toISOString(),
     senderDevice: "Mobile",
@@ -60,6 +61,7 @@ const MOCK_MESSAGES = [
     isRead: false,
     isPublic: true,
     instagramUsername: "flower_lover",
+    recipientName: "Joshy",
     createdAt: new Date(Date.now() - 86400000),
     senderTimestamp: new Date(Date.now() - 86400000).toISOString(),
     senderDevice: "Desktop",
@@ -263,17 +265,25 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
 
                   {/* Sender Intel (Admin Only) */}
                   <div className="mb-4 space-y-2">
-                    {msg.instagramUsername && (
-                      <a
-                        href={`https://instagram.com/${msg.instagramUsername.replace("@", "")}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-gradient-to-r from-pink-50 to-purple-50 p-2 rounded-lg border border-pink-200 inline-block mr-2 hover:shadow-md transition-shadow"
-                      >
-                        <span className="text-[10px] font-ui font-bold uppercase text-stone-400 block mb-0.5">From (Private)</span>
-                        <span className="text-sm font-bold text-stone-600 font-mono">@{msg.instagramUsername.replace("@", "")}</span>
-                      </a>
-                    )}
+                    <div className="flex flex-wrap gap-2">
+                      {msg.instagramUsername && (
+                        <a
+                          href={`https://instagram.com/${msg.instagramUsername.replace("@", "")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-gradient-to-r from-pink-50 to-purple-50 p-2 rounded-lg border border-pink-200 inline-block hover:shadow-md transition-shadow"
+                        >
+                          <span className="text-[10px] font-ui font-bold uppercase text-stone-400 block mb-0.5">From</span>
+                          <span className="text-sm font-bold text-stone-600 font-mono">@{msg.instagramUsername.replace("@", "")}</span>
+                        </a>
+                      )}
+                      {msg.recipientName && (
+                        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-2 rounded-lg border border-purple-200 inline-block">
+                          <span className="text-[10px] font-ui font-bold uppercase text-stone-400 block mb-0.5">To</span>
+                          <span className="text-sm font-bold text-purple-600">💌 {msg.recipientName}</span>
+                        </div>
+                      )}
+                    </div>
 
                     <div className="flex flex-wrap gap-2">
                       {msg.senderIp && (

@@ -7,6 +7,7 @@ create table if not exists messages (
   bouquet_id text,
   note text,
   instagram_username text not null, -- Required for privacy policy (internal/admin use only)
+  recipient_name text, -- Who is the confession for?
   is_public boolean default false, -- For moderation
   is_read boolean default false,
   sender_device text,

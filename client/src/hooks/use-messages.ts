@@ -29,6 +29,7 @@ export function useSendMessage() {
           sender_location: data.senderLocation,
           sender_ip: ip, // Store IP
           instagram_username: data.instagramUsername,
+          recipient_name: data.recipientName,
         });
 
       if (error) {
@@ -70,7 +71,8 @@ export function useMessages(creatorId: number | undefined) {
         senderDevice: msg.sender_device,
         senderLocation: msg.sender_location,
         senderIp: msg.sender_ip, // Map IP
-        instagramUsername: msg.instagram_username, // Map new field
+        instagramUsername: msg.instagram_username,
+        recipientName: msg.recipient_name,
         isPublic: msg.is_public // Map moderation field
       }));
     },
