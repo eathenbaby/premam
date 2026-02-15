@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Dancing+Script:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Quicksand:wght@300..700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,42 +6,25 @@
 
 @layer base {
   body {
-    @apply bg-parchment text-foreground font-body overflow-x-hidden;
+    @apply bg-background text-foreground font-sans overflow-x-hidden;
     background-image:
-      radial-gradient(ellipse at 20% 50%, rgba(212, 165, 165, 0.12) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 20%, rgba(163, 120, 95, 0.08) 0%, transparent 40%),
-      radial-gradient(ellipse at 50% 80%, rgba(139, 26, 26, 0.04) 0%, transparent 50%);
-    /* Subtle paper texture via repeating gradient noise */
-    background-color: #FFF9F0;
+      radial-gradient(circle at 10% 20%, rgba(255, 105, 180, 0.1) 0%, transparent 20%),
+      radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 20%);
   }
 
-  /* Paper texture overlay for body */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-normal;
-  }
-
-  ::selection {
-    background: rgba(139, 26, 26, 0.15);
-    color: #3D1C1C;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-wide;
   }
 }
 
 @layer components {
 
-  /* Floating Hearts - vintage style */
+  /* Dynamic Background with Heart Particles */
   .floating-hearts {
     position: fixed;
     top: 0;
@@ -55,147 +38,64 @@
 
   .heart-particle {
     position: absolute;
-    color: rgba(139, 26, 26, 0.15);
-    font-size: 16px;
-    animation: floatUp 14s linear infinite;
+    color: rgba(255, 105, 180, 0.3);
+    font-size: 20px;
+    animation: floatUp 10s linear infinite;
   }
 
   @keyframes floatUp {
     0% {
-      transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.5);
+      transform: translateY(100vh) translateX(0) scale(0.5);
       opacity: 0;
     }
-    15% {
-      opacity: 0.6;
+
+    20% {
+      opacity: 0.8;
     }
+
     100% {
-      transform: translateY(-10vh) translateX(30px) rotate(20deg) scale(1);
+      transform: translateY(-10vh) translateX(20px) scale(1.2);
       opacity: 0;
     }
   }
 
-  /* Scrapbook Glass Card - parchment style */
+  /* Glassmorphism Card */
   .glass-card {
-    @apply bg-parchment-warm border border-burgundy/10 rounded-lg;
-    box-shadow:
-      0 1px 3px rgba(60, 20, 10, 0.08),
-      0 8px 24px rgba(60, 20, 10, 0.1);
-    position: relative;
+    @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-xl rounded-2xl;
+    box-shadow: 0 8px 32px 0 rgba(255, 105, 180, 0.15);
   }
 
-  .glass-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: linear-gradient(135deg, rgba(255, 249, 240, 0.5) 0%, transparent 50%);
-  }
-
-  /* Vintage Button - wax seal style */
+  /* Cutesy Button Gradient */
   .btn-sunset {
-    background: linear-gradient(135deg, #8B1A1A 0%, #722F37 50%, #6B0F1A 100%);
+    background: linear-gradient(90deg, #FF69B4 0%, #FF7F50 50%, #FFD700 100%);
     background-size: 200% auto;
-    transition: all 0.4s ease;
-    @apply text-parchment font-display font-semibold rounded-lg shadow-md border-none tracking-wide;
-    box-shadow: 0 2px 8px rgba(107, 15, 26, 0.3);
-    text-transform: none;
-    letter-spacing: 0.02em;
+    transition: 0.5s;
+    @apply text-white font-bold rounded-full shadow-lg border-none;
   }
 
   .btn-sunset:hover {
     background-position: right center;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(107, 15, 26, 0.4);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
   }
 
-  /* Vintage Input */
+  /* Dotted Input */
   .input-dotted {
-    @apply border border-burgundy/20 bg-parchment rounded-lg px-4 py-3 focus:ring-2 focus:ring-burgundy/20 focus:border-burgundy/40 transition-all duration-300 font-body;
+    @apply border-2 border-dotted border-primary/50 bg-white/50 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary focus:border-solid transition-all;
   }
 
-  /* Paper Card - scrapbook entry */
+  /* Restored Botanical Theme Utilities */
   .paper-card {
-    @apply bg-parchment-warm border border-burgundy/10 rounded-lg;
+    @apply bg-[#FDFAF5] shadow-lg border border-stone-200;
     box-shadow:
-      2px 3px 0px rgba(60, 20, 10, 0.04),
-      0 8px 24px rgba(60, 20, 10, 0.08);
-    position: relative;
+      2px 2px 0px rgba(0, 0, 0, 0.05),
+      10px 10px 30px rgba(0, 0, 0, 0.05);
   }
 
-  /* Wax Seal Button */
   .wax-seal {
-    @apply rounded-lg bg-burgundy text-parchment font-display font-semibold tracking-wide shadow-md hover:bg-burgundy-dark transition-all duration-400 flex items-center justify-center;
+    @apply rounded-full bg-rose-600 text-white font-bold uppercase tracking-widest shadow-md hover:bg-rose-700 transition-all flex items-center justify-center;
     box-shadow:
-      inset -1px -1px 4px rgba(0, 0, 0, 0.15),
-      0 3px 12px rgba(107, 15, 26, 0.3);
-  }
-
-  .wax-seal:hover {
-    box-shadow:
-      inset -1px -1px 4px rgba(0, 0, 0, 0.15),
-      0 5px 20px rgba(107, 15, 26, 0.4);
-    transform: translateY(-1px);
-  }
-
-  /* Scrapbook rotation utilities */
-  .scrapbook-tilt-1 { transform: rotate(-1.5deg); }
-  .scrapbook-tilt-2 { transform: rotate(1deg); }
-  .scrapbook-tilt-3 { transform: rotate(-0.5deg); }
-  .scrapbook-tilt-4 { transform: rotate(2deg); }
-  .scrapbook-tilt-5 { transform: rotate(-1deg); }
-
-  /* Washi tape decorative strip */
-  .washi-tape {
-    position: relative;
-  }
-  .washi-tape::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%) rotate(-2deg);
-    width: 80px;
-    height: 16px;
-    background: rgba(212, 165, 165, 0.5);
-    border-radius: 2px;
-    z-index: 10;
-  }
-
-  /* Decorative flourish */
-  .flourish::after {
-    content: '❦';
-    display: block;
-    text-align: center;
-    font-size: 1.5rem;
-    color: rgba(139, 26, 26, 0.2);
-    margin-top: 1rem;
-    letter-spacing: 0.5em;
-  }
-
-  /* Vintage separator */
-  .vintage-divider {
-    @apply border-none h-px my-6;
-    background: linear-gradient(to right, transparent, rgba(139, 26, 26, 0.15), transparent);
-  }
-
-  /* Script text accent */
-  .script-accent {
-    @apply font-script text-burgundy;
-  }
-
-  /* Torn edge effect (bottom) */
-  .torn-edge::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    right: 0;
-    height: 8px;
-    background: linear-gradient(135deg, transparent 33.33%, #FFF9F0 33.33%, #FFF9F0 66.67%, transparent 66.67%);
-    background-size: 12px 8px;
+      inset -2px -2px 6px rgba(0, 0, 0, 0.2),
+      2px 4px 10px rgba(190, 18, 60, 0.3);
   }
 }

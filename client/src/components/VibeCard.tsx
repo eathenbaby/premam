@@ -23,29 +23,25 @@ export function VibeCard({ vibe, label, selected, onClick }: VibeCardProps) {
 
   return (
     <motion.button
-      whileHover={{ y: -3, rotate: selected ? 0 : 1 }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className={cn(
-        "flex flex-col items-center justify-center gap-3 p-5 rounded-lg border transition-all duration-400 relative",
-        selected
-          ? "bg-blush-light/40 border-burgundy/30 shadow-md"
-          : "bg-parchment border-burgundy/10 hover:border-burgundy/20 hover:shadow-sm"
+        "flex flex-col items-center justify-center gap-3 p-6 rounded-xl border transition-all duration-300",
+        selected 
+          ? "bg-rose-50 border-rose-200 shadow-md shadow-rose-100" 
+          : "bg-white border-stone-200 hover:border-stone-300 hover:shadow-sm"
       )}
-      style={{
-        boxShadow: selected ? '0 4px 16px rgba(60, 20, 10, 0.12)' : undefined,
-      }}
     >
       <div className={cn(
-        "w-11 h-11 rounded-full flex items-center justify-center transition-colors duration-400",
-        selected ? "bg-burgundy/10 text-burgundy" : "bg-parchment-aged text-ink-light"
+        "w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300",
+        selected ? "bg-rose-100 text-rose-600" : "bg-stone-100 text-stone-500 group-hover:bg-stone-200"
       )}>
-        <Icon className="w-5 h-5" />
+        <Icon className="w-6 h-6" />
       </div>
       <span className={cn(
-        "font-body text-sm font-medium",
-        selected ? "text-burgundy-dark" : "text-ink-light"
+        "font-display text-lg font-medium",
+        selected ? "text-rose-900" : "text-stone-600"
       )}>
         {label}
       </span>

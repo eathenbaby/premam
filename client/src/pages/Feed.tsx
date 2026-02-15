@@ -48,12 +48,12 @@ function VotePoll({ messageId }: { messageId: number }) {
   const myVote = votes?.myVote;
 
   return (
-    <div className="mt-4 pt-4 border-t border-burgundy/10">
-      <p className="text-xs font-ui font-bold uppercase tracking-widest text-ink-light mb-3">
+    <div className="mt-4 pt-4 border-t border-white/20">
+      <p className="text-xs font-ui font-bold uppercase tracking-widest text-stone-400 mb-3">
         Would you say yes? 👀
       </p>
       {!isAuthenticated ? (
-        <Link href="/auth" className="block text-center py-3 px-4 bg-blush-light/20 border border-burgundy/15 rounded-lg text-sm font-bold text-burgundy hover:bg-blush-light/30 transition-colors duration-300 font-body">
+        <Link href="/auth" className="block text-center py-3 px-4 bg-rose-50 border-2 border-rose-200 rounded-xl text-sm font-bold text-rose-500 hover:bg-rose-100 transition-colors">
           🔐 Login to vote
         </Link>
       ) : (
@@ -63,10 +63,10 @@ function VotePoll({ messageId }: { messageId: number }) {
           onClick={() => castVote.mutate({ messageId, vote: 'yes' })}
           disabled={castVote.isPending}
           className={cn(
-            "flex-1 py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 font-ui",
+            "flex-1 py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all",
             myVote === 'yes'
-              ? "bg-accent text-parchment shadow-md"
-              : "bg-parchment-aged/50 text-accent border border-burgundy/10 hover:bg-parchment-aged"
+              ? "bg-green-500 text-white shadow-lg shadow-green-200"
+              : "bg-green-50 text-green-600 border-2 border-green-200 hover:bg-green-100"
           )}
         >
           <ThumbsUp className="w-4 h-4" />
@@ -76,10 +76,10 @@ function VotePoll({ messageId }: { messageId: number }) {
           onClick={() => castVote.mutate({ messageId, vote: 'no' })}
           disabled={castVote.isPending}
           className={cn(
-            "flex-1 py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 font-ui",
+            "flex-1 py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all",
             myVote === 'no'
-              ? "bg-burgundy-dark text-parchment shadow-md"
-              : "bg-blush-light/20 text-burgundy-dark border border-burgundy/10 hover:bg-blush-light/30"
+              ? "bg-red-500 text-white shadow-lg shadow-red-200"
+              : "bg-red-50 text-red-500 border-2 border-red-200 hover:bg-red-100"
           )}
         >
           <ThumbsDown className="w-4 h-4" />
@@ -90,26 +90,26 @@ function VotePoll({ messageId }: { messageId: number }) {
       {total > 0 && (
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-2 bg-parchment-aged rounded-full overflow-hidden">
+            <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${yesPercent}%` }}
-                className="h-full bg-accent rounded-full"
+                className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"
               />
             </div>
-            <span className="text-[10px] font-bold text-accent w-8 text-right font-ui">{yesPercent}%</span>
+            <span className="text-[10px] font-bold text-green-600 w-8 text-right">{yesPercent}%</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-2 bg-parchment-aged rounded-full overflow-hidden">
+            <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${noPercent}%` }}
-                className="h-full bg-burgundy-wine rounded-full"
+                className="h-full bg-gradient-to-r from-red-400 to-rose-500 rounded-full"
               />
             </div>
-            <span className="text-[10px] font-bold text-burgundy-wine w-8 text-right font-ui">{noPercent}%</span>
+            <span className="text-[10px] font-bold text-red-500 w-8 text-right">{noPercent}%</span>
           </div>
-          <p className="text-[10px] text-ink-light text-center font-ui">{total} vote{total !== 1 ? 's' : ''}</p>
+          <p className="text-[10px] text-stone-400 text-center">{total} vote{total !== 1 ? 's' : ''}</p>
         </div>
       )}
       </>
@@ -122,23 +122,21 @@ export default function Feed() {
   const { data: messages, isLoading } = usePublicMessages();
   const [, setLocation] = useLocation();
 
-  const tilts = ['scrapbook-tilt-1', 'scrapbook-tilt-2', 'scrapbook-tilt-3', 'scrapbook-tilt-4', 'scrapbook-tilt-5'];
-
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen bg-transparent pb-20">
       <Navigation />
 
-      <header className="pt-12 px-6 pb-6 border-b border-burgundy/10 bg-parchment-warm/80 backdrop-blur-sm sticky top-0 z-40">
+      <header className="pt-12 px-6 pb-6 border-b border-white/20 bg-white/30 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-4xl mx-auto flex items-end justify-between">
           <div>
-            <span className="text-xs font-ui font-bold uppercase tracking-widest text-ink-light">Public Feed</span>
-            <h1 className="text-4xl font-display text-ink font-semibold">Confessions</h1>
+            <span className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500">Public Feed</span>
+            <h1 className="text-4xl font-display text-ink font-bold">Confessions</h1>
           </div>
           <div className="text-right">
-            <span className="text-3xl font-display text-burgundy block leading-none font-semibold">
+            <span className="text-3xl font-display text-primary block leading-none font-bold">
               {messages?.length || 0}
             </span>
-            <span className="text-[10px] font-ui font-bold uppercase tracking-widest text-ink-light">Shared</span>
+            <span className="text-[10px] font-ui font-bold uppercase tracking-widest text-stone-500">Shared</span>
           </div>
         </div>
       </header>
@@ -146,15 +144,15 @@ export default function Feed() {
       <main className="max-w-4xl mx-auto px-4 pt-8">
         {isLoading ? (
           <div className="py-20 flex justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-burgundy" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : messages?.length === 0 ? (
-          <GlassCard className="text-center py-20">
-            <div className="w-20 h-20 bg-blush-light/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Sparkles className="w-8 h-8 text-burgundy/40" />
+          <GlassCard className="text-center py-20 text-stone-400">
+            <div className="w-20 h-20 bg-white/50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="w-8 h-8 opacity-50 text-primary" />
             </div>
             <p className="font-display text-xl text-ink">No confessions yet.</p>
-            <p className="font-body text-sm mt-2 text-ink-light italic">Send one to see it here!</p>
+            <p className="font-body text-sm mt-2">Send one to see it here!</p>
             <div className="mt-6">
               <CutesyButton onClick={() => setLocation('/')}>
                 <Send className="w-4 h-4 mr-2" /> Send a Confession
@@ -168,31 +166,30 @@ export default function Feed() {
                 key={msg.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1, duration: 0.5, ease: "easeOut" }}
-                className={tilts[i % tilts.length]}
+                transition={{ delay: i * 0.1 }}
               >
                 <GlassCard className={cn(
-                  "p-6 rounded-lg relative overflow-hidden border",
-                  msg.type === 'bouquet' ? "border-blush-dark/30" : "border-burgundy/15"
+                  "p-6 rounded-3xl relative overflow-hidden border-2",
+                  msg.type === 'bouquet' ? "border-purple-200" : "border-primary/20"
                 )}>
                   {/* Header */}
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-2">
                       {msg.type === 'bouquet' ? (
-                        <span className="w-8 h-8 bg-blush-light/40 text-burgundy-wine rounded-full flex items-center justify-center">
+                        <span className="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center">
                           <Flower className="w-4 h-4" />
                         </span>
                       ) : (
-                        <span className="w-8 h-8 bg-blush-light/40 text-burgundy rounded-full flex items-center justify-center">
+                        <span className="w-8 h-8 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center">
                           <Heart className="w-4 h-4" />
                         </span>
                       )}
                       <div>
-                        <span className="block text-[10px] font-ui font-bold uppercase tracking-widest text-ink-light">
+                        <span className="block text-[10px] font-ui font-bold uppercase tracking-widest text-stone-400">
                           {msg.type === 'bouquet' ? 'Bouquet' : 'Confession'}
                         </span>
                         {msg.senderTimestamp && (
-                          <span className="text-xs text-ink-light font-body italic">
+                          <span className="text-xs text-stone-400 font-body italic">
                             {format(new Date(msg.senderTimestamp), "MMM d, h:mm a")}
                           </span>
                         )}
@@ -200,7 +197,7 @@ export default function Feed() {
                     </div>
 
                     {msg.vibe && (
-                      <span className="px-2.5 py-1 bg-parchment-aged/60 rounded-lg text-xs font-ui font-bold text-accent border border-burgundy/10">
+                      <span className="px-2.5 py-1 bg-amber-50 rounded-full text-xs font-ui font-bold text-amber-600 border border-amber-200">
                         {VIBE_LABELS[msg.vibe] || msg.vibe}
                       </span>
                     )}
@@ -209,17 +206,17 @@ export default function Feed() {
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1.5 mb-3">
                     {msg.datePreference && (
-                      <span className="px-2 py-0.5 bg-parchment-aged/40 rounded-full text-[10px] font-bold text-ink-light font-ui border border-burgundy/5">
+                      <span className="px-2 py-0.5 bg-stone-100 rounded-full text-[10px] font-bold text-stone-500">
                         {msg.datePreference === 'random' ? '🎲 Random' : '💘 Specific'}
                       </span>
                     )}
                     {msg.genderPreference && (
-                      <span className="px-2 py-0.5 bg-parchment-aged/40 rounded-full text-[10px] font-bold text-ink-light font-ui border border-burgundy/5">
+                      <span className="px-2 py-0.5 bg-stone-100 rounded-full text-[10px] font-bold text-stone-500">
                         {msg.genderPreference === 'girl' ? '👩 Girl' : msg.genderPreference === 'boy' ? '👦 Boy' : '✨ Anyone'}
                       </span>
                     )}
                     {msg.recipientName && (
-                      <span className="px-2 py-0.5 bg-blush-light/20 rounded-full text-[10px] font-bold text-burgundy font-ui border border-burgundy/10">
+                      <span className="px-2 py-0.5 bg-purple-100 rounded-full text-[10px] font-bold text-purple-600">
                         💌 For {msg.recipientName}
                       </span>
                     )}
@@ -234,7 +231,7 @@ export default function Feed() {
                     ) : (
                       <div className="flex items-start gap-4">
                         {msg.bouquetId && (
-                          <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-parchment-aged border border-burgundy/10 shadow-sm">
+                          <div className="w-20 h-20 shrink-0 rounded-2xl overflow-hidden bg-stone-100 border-2 border-white shadow-sm">
                             <img
                               src={FLOWER_IMAGES[msg.bouquetId as string]}
                               alt="Bouquet"
