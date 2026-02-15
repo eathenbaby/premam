@@ -1,47 +1,65 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, buildUrl, type SendMessageInput } from "@shared/routes";
+import { type SendMessageInput } from "@shared/routes";
+import { supabase } from "@/lib/supabase";
 
-// POST /api/messages
+// POST /api/messages -> Supabase Insert
 export function useSendMessage() {
   return useMutation({
     mutationFn: async (data: SendMessageInput) => {
-      const validated = api.messages.send.input.parse(data);
-      const res = await fetch(api.messages.send.path, {
-        method: api.messages.send.method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(validated),
-      });
+      // Map the input to the Supabase table columns
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          type: data.type,
+          content: data.content,
+          vibe: data.vibe,
+          bouquet_id: data.bouquetId,
+          note: data.note,
+          sender_device: data.senderDevice,
+          sender_location: data.senderLocation,
+        });
 
-      if (!res.ok) {
-        if (res.status === 400) {
-          const error = await res.json();
-          throw new Error(error.message);
-        }
-        throw new Error('Failed to send message');
+      if (error) {
+        throw new Error(error.message);
       }
 
-      return api.messages.send.responses[201].parse(await res.json());
+      return { success: true };
     },
   });
 }
 
-// GET /api/creators/:id/messages
+// GET /api/creators/:id/messages -> Supabase Select
 export function useMessages(creatorId: number | undefined) {
   return useQuery({
-    queryKey: [api.messages.list.path, creatorId],
+    queryKey: ['messages', creatorId], // simplified key
     queryFn: async () => {
-      if (!creatorId) throw new Error("Creator ID required");
-      
-      const url = buildUrl(api.messages.list.path, { id: creatorId });
-      const res = await fetch(url);
-      
-      if (!res.ok) {
-        if (res.status === 401) throw new Error("Unauthorized");
-        throw new Error('Failed to fetch messages');
+      // For now, we ignore creatorId since it's Single Admin, 
+      // or we could filter if we add a creator_id column later.
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw new Error(error.message);
       }
-      
-      return api.messages.list.responses[200].parse(await res.json());
+
+      // Map Supabase snake_case to camelCase for frontend
+      return data.map((msg: any) => ({
+        id: msg.id,
+        type: msg.type,
+        content: msg.content,
+        vibe: msg.vibe,
+        bouquetId: msg.bouquet_id,
+        note: msg.note,
+        isRead: msg.is_read,
+        createdAt: new Date(msg.created_at),
+        senderTimestamp: msg.created_at, // using created_at as timestamp
+        senderDevice: msg.sender_device,
+        senderLocation: msg.sender_location
+      }));
     },
+    // Only fetch if we are "logged in" (creatorId is present)
     enabled: !!creatorId,
   });
 }

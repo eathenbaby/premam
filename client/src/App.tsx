@@ -12,8 +12,7 @@ import { FloatingHearts } from "@/components/InteractiveComponents";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/to/:slug" component={Send} />
+      <Route path="/" component={Send} />
       <Route path="/inbox" component={Inbox} />
       <Route component={NotFound} />
     </Switch>

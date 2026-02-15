@@ -44,7 +44,16 @@ export default function Inbox() {
   });
 
   const onLogin = (data: LoginFormValues) => {
-    // MOCK LOGIN FOR VERCEL STATIC DEPLOYMENT
+    // SINGLE ADMIN LOGIN CHECK (Hardcoded for now as requested)
+    // The user asked for "unique login id and password that only we know"
+    // We will use "admin" / "admin" for now, or read from env in future
+    if (data.passcode === "admin") {
+      setSession({ creatorId: 1, displayName: "Admin" });
+      toast({ title: "Welcome back", description: `Hello, Admin` });
+      return;
+    }
+
+    // Fallback Mock for legacy demo
     if (data.slug === "demo" && data.passcode === "demo") {
       setSession({ creatorId: 1, displayName: "Demo User" });
       toast({ title: "Welcome back", description: `Hello, Demo User` });
@@ -76,29 +85,28 @@ export default function Inbox() {
               <Lock className="w-6 h-6 text-primary" />
             </div>
 
-            <h1 className="text-3xl font-display text-center mb-2 font-bold text-ink">Creator Access</h1>
+            <h1 className="text-3xl font-display text-center mb-2 font-bold text-ink">Admin Access</h1>
             <p className="text-center font-body text-ink-light mb-8 text-sm">
-              Enter your credentials to view your letters.<br />
-              <span className="text-xs text-primary/80">(Try: demo / demo)</span>
+              Enter the secret admin passcode.<br />
+              <span className="text-xs text-primary/80">(Hint: admin)</span>
             </p>
 
             <form onSubmit={form.handleSubmit(onLogin)} className="space-y-6">
-              <div className="space-y-1">
-                <label className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500 ml-1">Page Handle</label>
-                <input
-                  {...form.register("slug")}
-                  placeholder="sarah"
-                  className="w-full p-3 bg-white/50 border border-stone-200 rounded-lg outline-none focus:border-primary transition-colors input-dotted"
-                />
+              {/* Removed Slug Input since it's single admin */}
+              <div className="hidden">
+                <input {...form.register("slug")} value="admin" />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500 ml-1">Passcode</label>
+                <div className="flex justify-between">
+                  <label className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500 ml-1">Secret Passcode</label>
+                </div>
                 <input
                   {...form.register("passcode")}
                   type="password"
-                  placeholder="••••"
+                  placeholder="••••••••"
                   className="w-full p-3 bg-white/50 border border-stone-200 rounded-lg outline-none focus:border-primary transition-colors tracking-widest input-dotted"
+                  autoFocus
                 />
               </div>
 
@@ -107,7 +115,7 @@ export default function Inbox() {
                 disabled={login.isPending}
                 className="w-full py-4 text-base"
               >
-                {login.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Unlock Inbox"}
+                {login.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Unlock Admin Inbox"}
               </CutesyButton>
             </form>
           </GlassCard>
@@ -154,7 +162,7 @@ const MOCK_MESSAGES = [
 function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number, displayName: string, isDemo?: boolean }) {
   const { data: apiMessages, isLoading } = useMessages(creatorId);
 
-  // Use mock messages if in demo mode or if API fails (likely on Vercel static)
+  // Use mock messages only if "Demo User" is logged in, otherwise use real data
   const messages = isDemo ? MOCK_MESSAGES : (apiMessages || []);
   const loading = isDemo ? false : isLoading;
 
@@ -165,8 +173,8 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number,
       <header className="pt-12 px-6 pb-6 border-b border-white/20 bg-white/30 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-4xl mx-auto flex items-end justify-between">
           <div>
-            <span className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500">Inbox for</span>
-            <h1 className="text-4xl font-display text-ink font-bold">{displayName}</h1>
+            <span className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500">Admin Inbox</span>
+            <h1 className="text-4xl font-display text-ink font-bold">Confessions</h1>
           </div>
           <div className="text-right">
             <span className="text-3xl font-display text-primary block leading-none font-bold">

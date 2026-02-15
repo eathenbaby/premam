@@ -38,10 +38,16 @@ const VIBES = [
   { id: "friends", label: "Friendship" },
 ];
 
+// Hardcoded Admin Profile for Single-User Mode
+const ADMIN_PROFILE = {
+  id: 1,
+  displayName: "Us", // "Send a message to Us"
+  slug: "admin",
+  passcode: "admin"
+};
+
 export default function Send() {
-  const [match, params] = useRoute("/to/:slug");
-  const slug = match ? params.slug : null;
-  const { data: creator, isLoading: loadingCreator } = useCreator(slug);
+  // Removed useRoute and useCreator since we are in Single Admin mode
   const sendMessage = useSendMessage();
   const { toast } = useToast();
   const { triggerConfetti } = useConfetti();
@@ -60,8 +66,6 @@ export default function Send() {
   };
 
   const handleSubmit = async () => {
-    if (!activeCreator) return;
-
     if (activeTab === 'confession' && !content) {
       toast({ variant: "destructive", title: "Wait!", description: "Please write a message first." });
       return;
@@ -72,22 +76,17 @@ export default function Send() {
     }
 
     try {
-      // MOCK SUBMISSION FOR VERCEL STATIC DEPLOYMENT
-      // If we are in demo mode (static site), we skip the real API call
-      if (activeCreator.slug === 'demo' || !creator) {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Fake network delay
-      } else {
-        await sendMessage.mutateAsync({
-          creatorId: activeCreator.id,
-          type: activeTab,
-          vibe: activeTab === 'confession' ? selectedVibe : null,
-          content: activeTab === 'confession' ? content : null,
-          bouquetId: activeTab === 'bouquet' ? selectedBouquet : null,
-          note: activeTab === 'bouquet' ? note : null,
-          senderDevice: navigator.userAgent,
-          senderLocation: "Unknown",
-        });
-      }
+      // Use the real Supabase mutation
+      await sendMessage.mutateAsync({
+        creatorId: ADMIN_PROFILE.id,
+        type: activeTab,
+        vibe: activeTab === 'confession' ? selectedVibe : null,
+        content: activeTab === 'confession' ? content : null,
+        bouquetId: activeTab === 'bouquet' ? selectedBouquet : null,
+        note: activeTab === 'bouquet' ? note : null,
+        senderDevice: navigator.userAgent,
+        senderLocation: "Unknown",
+      });
 
       setIsSuccess(true);
       triggerConfetti();
@@ -100,34 +99,6 @@ export default function Send() {
       });
     }
   };
-
-  if (loadingCreator) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-paper">
-        <Loader2 className="w-8 h-8 animate-spin text-ink/30" />
-      </div>
-    );
-  }
-
-  // MOCK FALLBACK FOR VERCEL STATIC DEPLOYMENT
-  // If the API fails (which it will on static Vercel), we use this mock creator
-  const activeCreator = creator || {
-    id: 1,
-    displayName: "Your Valentine",
-    slug: slug || "demo",
-    passcode: "demo",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  if (!activeCreator) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-paper p-4 text-center">
-        <h1 className="text-4xl font-display mb-4">User not found</h1>
-        <p className="font-body text-ink-light">Maybe the link is incorrect?</p>
-      </div>
-    );
-  }
 
   if (!hasAnsweredYes) {
     return (
@@ -145,7 +116,7 @@ export default function Send() {
             />
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold text-ink mb-2">Do you love me?</h1>
+          <h1 className="text-4xl md:text-6xl font-bold text-ink mb-2">Do you love us?</h1>
           <p className="text-xl text-ink-light mb-12">Be honest... 👀</p>
 
           <div className="flex items-center justify-center gap-8 relative h-20">
@@ -175,7 +146,7 @@ export default function Send() {
           </div>
           <h2 className="text-4xl font-display mb-4 font-bold text-ink">Sent with love!</h2>
           <p className="font-body text-ink-light mb-8">
-            Your message has been delivered to {activeCreator.displayName}.
+            Your message has been delivered to {ADMIN_PROFILE.displayName}.
           </p>
           <button
             onClick={() => {
@@ -205,7 +176,7 @@ export default function Send() {
           <span className="block text-xs font-ui font-bold uppercase tracking-widest text-primary mb-2">
             Yay! You said yes!
           </span>
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-ink">Send a Message to {activeCreator.displayName}</h1>
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-ink">Send a Message to {ADMIN_PROFILE.displayName}</h1>
         </motion.div>
       </header>
 
@@ -328,7 +299,7 @@ export default function Send() {
               )}
             </CutesyButton>
             <p className="text-center mt-4 text-xs font-ui text-stone-400">
-              Messages are private and only visible to {activeCreator.displayName}.
+              Messages are private and only visible to {ADMIN_PROFILE.displayName}.
             </p>
           </div>
         </GlassCard>
