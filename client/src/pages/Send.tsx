@@ -67,6 +67,10 @@ export default function Send() {
   };
 
   const handleSubmit = async () => {
+    if (!instagramUsername.trim()) {
+      toast({ variant: "destructive", title: "Hold up! 🤚", description: "You need to enter your Instagram handle to send a confession." });
+      return;
+    }
     if (activeTab === 'confession' && !content) {
       toast({ variant: "destructive", title: "Wait!", description: "Please write a message first." });
       return;
