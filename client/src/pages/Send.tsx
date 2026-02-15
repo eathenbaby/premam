@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { useRoute } from "wouter";
+import { useState, useEffect } from "react";
 import { useCreator } from "@/hooks/use-creators";
 import { useSendMessage } from "@/hooks/use-messages";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Send as SendIcon, Heart } from "lucide-react";
+import { Loader2, Send as SendIcon, Heart, Instagram, CheckCircle } from "lucide-react";
 import { VibeCard } from "@/components/VibeCard";
 import { FlowerCard } from "@/components/FlowerCard";
 import confetti from "canvas-confetti";
@@ -58,8 +57,52 @@ export default function Send() {
   const [selectedBouquet, setSelectedBouquet] = useState<string | null>(null);
   const [content, setContent] = useState("");
   const [instagramUsername, setInstagramUsername] = useState("");
+  const [instagramVerified, setInstagramVerified] = useState(false);
+  const [instagramLoading, setInstagramLoading] = useState(false);
+  const [showManualInput, setShowManualInput] = useState(false);
   const [note, setNote] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Instagram OAuth callback handler
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    if (!code) return;
+
+    // Clean URL immediately
+    window.history.replaceState({}, "", window.location.pathname);
+
+    setInstagramLoading(true);
+    const redirectUri = window.location.origin + "/";
+
+    fetch("/api/auth/instagram", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, redirect_uri: redirectUri }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.username) {
+          setInstagramUsername(data.username);
+          setInstagramVerified(true);
+          setHasAnsweredYes(true); // Skip the "do you love us" screen
+        } else {
+          toast({ variant: "destructive", title: "Login failed", description: "Could not verify your Instagram. Try again or enter manually." });
+          setShowManualInput(true);
+        }
+      })
+      .catch(() => {
+        toast({ variant: "destructive", title: "Login failed", description: "Something went wrong. Try again or enter manually." });
+        setShowManualInput(true);
+      })
+      .finally(() => setInstagramLoading(false));
+  }, []);
+
+  const handleInstagramLogin = () => {
+    const redirectUri = window.location.origin + "/";
+    const url = `https://www.instagram.com/oauth/authorize?client_id=1296105002566889&redirect_uri=${encodeURIComponent(redirectUri)}&scope=instagram_business_basic&response_type=code`;
+    window.location.href = url;
+  };
 
   const handleYes = () => {
     triggerConfetti();
@@ -161,7 +204,9 @@ export default function Send() {
               setNote("");
               setSelectedVibe(null);
               setSelectedBouquet(null);
-              setInstagramUsername(""); // Reset username
+              setInstagramUsername("");
+              setInstagramVerified(false);
+              setShowManualInput(false);
             }}
             className="text-sm font-ui uppercase tracking-widest border-b-2 border-primary pb-1 text-primary hover:text-primary/80 transition-colors font-bold"
           >
@@ -217,17 +262,54 @@ export default function Send() {
             </button>
           </div>
 
-          {/* Instagram Input (Required) */}
+          {/* Instagram Auth (Required) */}
           <div className="mb-8 p-4 bg-rose-50/50 rounded-xl border border-rose-100">
             <label className="block text-xs font-ui font-bold uppercase tracking-widest text-rose-500 mb-2 ml-1">
-              Your Instagram @ (Required)
+              Your Instagram (Required)
             </label>
-            <input
-              value={instagramUsername}
-              onChange={(e) => setInstagramUsername(e.target.value)}
-              placeholder="@username"
-              className="w-full bg-white border border-rose-200 rounded-lg p-3 text-ink outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
-            />
+
+            {instagramVerified ? (
+              <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                <span className="font-bold text-green-700">@{instagramUsername}</span>
+                <span className="text-green-500 text-xs">Verified ✅</span>
+              </div>
+            ) : instagramLoading ? (
+              <div className="flex items-center justify-center gap-2 p-4">
+                <Loader2 className="w-5 h-5 animate-spin text-pink-500" />
+                <span className="text-pink-500 font-bold text-sm">Verifying your Instagram...</span>
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={handleInstagramLogin}
+                  className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-xl font-bold text-white text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all"
+                  style={{ background: "linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)" }}
+                >
+                  <Instagram className="w-6 h-6" />
+                  Login with Instagram
+                </button>
+
+                {showManualInput ? (
+                  <div className="mt-3">
+                    <input
+                      value={instagramUsername}
+                      onChange={(e) => setInstagramUsername(e.target.value)}
+                      placeholder="@username"
+                      className="w-full bg-white border border-rose-200 rounded-lg p-3 text-ink outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+                    />
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowManualInput(true)}
+                    className="block mx-auto mt-3 text-xs text-stone-400 hover:text-stone-600 underline transition-colors"
+                  >
+                    or enter manually
+                  </button>
+                )}
+              </>
+            )}
+
             <p className="text-[10px] text-rose-400 mt-2 ml-1 italic">
               * We promise not to reveal this to anyone else. It's just for us to know who sent it.
             </p>
