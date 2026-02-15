@@ -4,6 +4,18 @@ import { z } from "zod";
 
 // === TABLE DEFINITIONS ===
 
+// Users (Account system)
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  fullName: text("full_name").notNull(),
+  email: text("email").notNull().unique(),
+  collegeUid: text("college_uid").notNull().unique(),
+  mobileNumber: text("mobile_number").notNull(),
+  instagramUsername: text("instagram_username").notNull(),
+  isVerified: boolean("is_verified").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Creators (Users who receive messages)
 export const creators = pgTable("creators", {
   id: serial("id").primaryKey(),
@@ -32,6 +44,9 @@ export const messages = pgTable("messages", {
   senderLocation: text("sender_location"),
   senderTimestamp: timestamp("sender_timestamp").defaultNow(),
 
+  // Sender user reference (nullable for backward compat)
+  senderUserId: integer("sender_user_id"),
+
   // NGL-style Requirement
   instagramUsername: text("instagram_username").notNull(),
   recipientName: text("recipient_name"), // Who is this confession for?
@@ -54,6 +69,14 @@ export const votes = pgTable("votes", {
 
 // === SCHEMAS ===
 
+export const insertUserSchema = createInsertSchema(users).pick({
+  fullName: true,
+  email: true,
+  collegeUid: true,
+  mobileNumber: true,
+  instagramUsername: true,
+});
+
 export const insertCreatorSchema = createInsertSchema(creators).pick({
   displayName: true,
   slug: true,
@@ -69,6 +92,7 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   note: true,
   senderDevice: true,
   senderLocation: true,
+  senderUserId: true,
   instagramUsername: true,
   recipientName: true,
   datePreference: true,
@@ -95,6 +119,9 @@ export type CreateLinkRequest = InsertCreator;
 export type SendMessageRequest = InsertMessage;
 
 // Response types
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+
 export type CreatorResponse = Creator;
 export type MessageResponse = Message;
 

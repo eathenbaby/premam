@@ -1,3 +1,20 @@
+-- Create users table
+create table if not exists users (
+  id bigint primary key generated always as identity,
+  full_name text not null,
+  college_uid text not null unique,
+  mobile_number text not null,
+  instagram_username text not null,
+  is_verified boolean default false,
+  created_at timestamp with time zone default timezone('utc'::text, now())
+);
+
+alter table users enable row level security;
+
+create policy "Enable insert for anon users" on users for insert to anon with check (true);
+create policy "Enable select for anon users" on users for select to anon using (true);
+create policy "Enable update for anon users" on users for update to anon using (true);
+
 -- Create messages table
 create table if not exists messages (
   id bigint primary key generated always as identity,
@@ -13,6 +30,7 @@ create table if not exists messages (
   gender_preference text, -- 'girl', 'boy', or 'any'
   is_public boolean default false, -- For moderation
   is_read boolean default false,
+  sender_user_id bigint,
   sender_device text,
   sender_location text,
   sender_ip text, -- New IP tracking field

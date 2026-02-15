@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@shared/schema";
@@ -12,6 +12,7 @@ import { z } from "zod";
 import { Navigation } from "@/components/Navigation";
 import { cn } from "@/lib/utils";
 import { GlassCard, CutesyButton } from "@/components/InteractiveComponents";
+import { supabase } from "@/lib/supabase";
 
 import bouquet01 from "@assets/64603-OB2R9V-578_1771092125803.jpg";
 import bouquet02 from "@assets/6502939_1771092125804.jpg";
@@ -166,14 +167,49 @@ export default function Inbox() {
   return <InboxDashboard creatorId={session.creatorId} displayName={session.displayName} isDemo={session.displayName === "Demo User"} />;
 }
 
+interface SenderUser {
+  id: number;
+  fullName: string;
+  collegeUid: string;
+  mobileNumber: string;
+  instagramUsername: string;
+}
+
 function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number; displayName: string; isDemo?: boolean }) {
   const { data: apiMessages, isLoading } = useMessages(creatorId);
   const togglePublic = useTogglePublic();
   const deleteMessage = useDeleteMessage();
   const { toast } = useToast();
+  const [senderUsers, setSenderUsers] = useState<Record<number, SenderUser>>({});
 
   const messages = isDemo ? MOCK_MESSAGES : (apiMessages || []);
   const loading = isDemo ? false : isLoading;
+
+  // Fetch sender user details
+  useEffect(() => {
+    if (!messages || messages.length === 0) return;
+    const userIds = Array.from(new Set(messages.map((m: any) => m.senderUserId).filter(Boolean))) as number[];
+    if (userIds.length === 0) return;
+
+    supabase
+      .from("users")
+      .select("*")
+      .in("id", userIds)
+      .then(({ data }: { data: any }) => {
+        if (!data) return;
+        const map: Record<number, SenderUser> = {};
+        for (const row of data) {
+          map[row.id] = {
+            id: row.id,
+            fullName: row.full_name,
+            collegeUid: row.college_uid,
+            mobileNumber: row.mobile_number,
+            instagramUsername: row.instagram_username,
+          };
+        }
+        setSenderUsers(map);
+      });
+  }, [messages]);
 
   const handleToggle = (id: number, currentStatus: boolean) => {
     togglePublic.mutate(
@@ -271,6 +307,17 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
 
                   {/* Sender Intel (Admin Only) */}
                   <div className="mb-4 space-y-2">
+                    {/* User account info */}
+                    {(msg as any).senderUserId && senderUsers[(msg as any).senderUserId] && (
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-3 rounded-xl border border-blue-200 mb-2">
+                        <span className="text-[10px] font-ui font-bold uppercase text-blue-400 block mb-1">👤 Registered User</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-blue-700">{senderUsers[(msg as any).senderUserId].fullName}</span>
+                          <span className="text-xs font-mono text-blue-500 bg-blue-100 px-2 py-0.5 rounded">{senderUsers[(msg as any).senderUserId].collegeUid}</span>
+                        </div>
+                        <span className="text-xs text-stone-400">📱 {senderUsers[(msg as any).senderUserId].mobileNumber}</span>
+                      </div>
+                    )}
                     <div className="flex flex-wrap gap-2">
                       {msg.instagramUsername && (
                         <a

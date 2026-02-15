@@ -2,6 +2,16 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { type SendMessageInput } from "@shared/routes";
 import { supabase } from "@/lib/supabase";
 
+function getStoredCollegeUid(): string | null {
+  try {
+    const raw = localStorage.getItem("premam_user");
+    if (!raw) return null;
+    return JSON.parse(raw).collegeUid || null;
+  } catch {
+    return null;
+  }
+}
+
 // POST /api/messages -> Supabase Insert
 export function useSendMessage() {
   return useMutation({
@@ -28,6 +38,7 @@ export function useSendMessage() {
           sender_device: data.senderDevice,
           sender_location: data.senderLocation,
           sender_ip: ip, // Store IP
+          sender_user_id: (data as any).senderUserId || null,
           instagram_username: data.instagramUsername,
           recipient_name: data.recipientName,
           date_preference: data.datePreference,
@@ -79,7 +90,8 @@ export function useMessages(creatorId: number | undefined) {
         datePreference: msg.date_preference,
         recipientInstagram: msg.recipient_instagram,
         genderPreference: msg.gender_preference,
-        isPublic: msg.is_public // Map moderation field
+        isPublic: msg.is_public, // Map moderation field
+        senderUserId: msg.sender_user_id,
       }));
     },
     // Only fetch if we are "logged in" (creatorId is present)
@@ -118,27 +130,6 @@ export function usePublicMessages() {
   });
 }
 
-// Simple browser fingerprint for vote deduplication
-function getFingerprint(): string {
-  const nav = navigator;
-  const raw = [
-    nav.userAgent,
-    nav.language,
-    screen.width,
-    screen.height,
-    screen.colorDepth,
-    new Date().getTimezoneOffset(),
-  ].join('|');
-  // Simple hash
-  let hash = 0;
-  for (let i = 0; i < raw.length; i++) {
-    const char = raw.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  return hash.toString(36);
-}
-
 // GET votes for a message
 export function useVotes(messageId: number) {
   return useQuery({
@@ -153,27 +144,28 @@ export function useVotes(messageId: number) {
 
       const yes = data.filter((v: any) => v.vote === 'yes').length;
       const no = data.filter((v: any) => v.vote === 'no').length;
-      const myFingerprint = getFingerprint();
-      const myVote = data.find((v: any) => v.voter_fingerprint === myFingerprint);
+      const collegeUid = getStoredCollegeUid();
+      const myVote = collegeUid ? data.find((v: any) => v.voter_fingerprint === collegeUid) : undefined;
 
       return { yes, no, total: yes + no, myVote: myVote?.vote as string | undefined };
     },
   });
 }
 
-// Cast a vote
+// Cast a vote (requires logged-in user, uses collegeUid as voter identifier)
 export function useCastVote() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ messageId, vote }: { messageId: number; vote: 'yes' | 'no' }) => {
-      const fingerprint = getFingerprint();
+      const collegeUid = getStoredCollegeUid();
+      if (!collegeUid) throw new Error("You must be logged in to vote.");
 
       // Check if already voted
       const { data: existing } = await supabase
         .from('votes')
         .select('id')
         .eq('message_id', messageId)
-        .eq('voter_fingerprint', fingerprint)
+        .eq('voter_fingerprint', collegeUid)
         .limit(1);
 
       if (existing && existing.length > 0) {
@@ -187,7 +179,7 @@ export function useCastVote() {
         // New vote
         const { error } = await supabase
           .from('votes')
-          .insert({ message_id: messageId, vote, voter_fingerprint: fingerprint });
+          .insert({ message_id: messageId, vote, voter_fingerprint: collegeUid });
         if (error) throw new Error(error.message);
       }
     },

@@ -1,5 +1,6 @@
 import { usePublicMessages, useVotes, useCastVote } from "@/hooks/use-messages";
-import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
+import { useLocation, Link } from "wouter";
 import { motion } from "framer-motion";
 import { Loader2, Heart, Flower, Sparkles, Send, ThumbsUp, ThumbsDown } from "lucide-react";
 import { format } from "date-fns";
@@ -35,6 +36,7 @@ const VIBE_LABELS: Record<string, string> = {
 function VotePoll({ messageId }: { messageId: number }) {
   const { data: votes, isLoading } = useVotes(messageId);
   const castVote = useCastVote();
+  const { isAuthenticated } = useAuth();
 
   if (isLoading) return null;
 
@@ -50,6 +52,12 @@ function VotePoll({ messageId }: { messageId: number }) {
       <p className="text-xs font-ui font-bold uppercase tracking-widest text-stone-400 mb-3">
         Would you say yes? 👀
       </p>
+      {!isAuthenticated ? (
+        <Link href="/auth" className="block text-center py-3 px-4 bg-rose-50 border-2 border-rose-200 rounded-xl text-sm font-bold text-rose-500 hover:bg-rose-100 transition-colors">
+          🔐 Login to vote
+        </Link>
+      ) : (
+      <>
       <div className="flex gap-2 mb-3">
         <button
           onClick={() => castVote.mutate({ messageId, vote: 'yes' })}
@@ -103,6 +111,8 @@ function VotePoll({ messageId }: { messageId: number }) {
           </div>
           <p className="text-[10px] text-stone-400 text-center">{total} vote{total !== 1 ? 's' : ''}</p>
         </div>
+      )}
+      </>
       )}
     </div>
   );
