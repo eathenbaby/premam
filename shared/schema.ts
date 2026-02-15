@@ -35,6 +35,9 @@ export const messages = pgTable("messages", {
   // NGL-style Requirement
   instagramUsername: text("instagram_username").notNull(),
   recipientName: text("recipient_name"), // Who is this confession for?
+  datePreference: text("date_preference"), // 'random' | 'specific'
+  recipientInstagram: text("recipient_instagram"), // IG of the person they want to go with (if specific)
+  genderPreference: text("gender_preference"), // 'girl' | 'boy' | 'any'
 
   isRead: boolean("is_read").default(false),
   isArchived: boolean("is_archived").default(false),
@@ -59,6 +62,9 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   senderLocation: true,
   instagramUsername: true,
   recipientName: true,
+  datePreference: true,
+  recipientInstagram: true,
+  genderPreference: true,
 });
 
 

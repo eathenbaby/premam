@@ -8,6 +8,9 @@ create table if not exists messages (
   note text,
   instagram_username text not null, -- Required for privacy policy (internal/admin use only)
   recipient_name text, -- Who is the confession for?
+  date_preference text, -- 'random' or 'specific'
+  recipient_instagram text, -- IG of who they want (if specific)
+  gender_preference text, -- 'girl', 'boy', or 'any'
   is_public boolean default false, -- For moderation
   is_read boolean default false,
   sender_device text,

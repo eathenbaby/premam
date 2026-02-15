@@ -30,6 +30,9 @@ export function useSendMessage() {
           sender_ip: ip, // Store IP
           instagram_username: data.instagramUsername,
           recipient_name: data.recipientName,
+          date_preference: data.datePreference,
+          recipient_instagram: data.recipientInstagram,
+          gender_preference: data.genderPreference,
         });
 
       if (error) {
@@ -73,6 +76,9 @@ export function useMessages(creatorId: number | undefined) {
         senderIp: msg.sender_ip, // Map IP
         instagramUsername: msg.instagram_username,
         recipientName: msg.recipient_name,
+        datePreference: msg.date_preference,
+        recipientInstagram: msg.recipient_instagram,
+        genderPreference: msg.gender_preference,
         isPublic: msg.is_public // Map moderation field
       }));
     },

@@ -44,6 +44,9 @@ const MOCK_MESSAGES = [
     isPublic: false,
     instagramUsername: "secret_admirer",
     recipientName: "Eathen",
+    datePreference: "specific",
+    recipientInstagram: "eathen_baby",
+    genderPreference: "boy",
     createdAt: new Date(),
     senderTimestamp: new Date().toISOString(),
     senderDevice: "Mobile",
@@ -62,6 +65,9 @@ const MOCK_MESSAGES = [
     isPublic: true,
     instagramUsername: "flower_lover",
     recipientName: "Joshy",
+    datePreference: "random",
+    recipientInstagram: null,
+    genderPreference: "any",
     createdAt: new Date(Date.now() - 86400000),
     senderTimestamp: new Date(Date.now() - 86400000).toISOString(),
     senderDevice: "Desktop",
@@ -281,6 +287,33 @@ function InboxDashboard({ creatorId, displayName, isDemo }: { creatorId: number;
                         <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-2 rounded-lg border border-purple-200 inline-block">
                           <span className="text-[10px] font-ui font-bold uppercase text-stone-400 block mb-0.5">To</span>
                           <span className="text-sm font-bold text-purple-600">💌 {msg.recipientName}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Date & Gender Preferences */}
+                    <div className="flex flex-wrap gap-2">
+                      {msg.datePreference && (
+                        <div className="bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 flex items-center gap-1.5">
+                          <span className="text-[10px]">{msg.datePreference === 'random' ? '🎲' : '💘'}</span>
+                          <span className="text-[10px] font-bold text-amber-600 uppercase">{msg.datePreference}</span>
+                        </div>
+                      )}
+                      {msg.recipientInstagram && (
+                        <a
+                          href={`https://instagram.com/${msg.recipientInstagram}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-pink-50 px-2.5 py-1 rounded-full border border-pink-200 flex items-center gap-1.5 hover:shadow-sm transition-shadow"
+                        >
+                          <span className="text-[10px]">💘</span>
+                          <span className="text-[10px] font-bold text-pink-600">wants @{msg.recipientInstagram}</span>
+                        </a>
+                      )}
+                      {msg.genderPreference && (
+                        <div className="bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200 flex items-center gap-1.5">
+                          <span className="text-[10px]">{msg.genderPreference === 'girl' ? '👩' : msg.genderPreference === 'boy' ? '👦' : '✨'}</span>
+                          <span className="text-[10px] font-bold text-indigo-600 uppercase">{msg.genderPreference}</span>
                         </div>
                       )}
                     </div>

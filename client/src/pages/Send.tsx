@@ -79,6 +79,9 @@ export default function Send() {
   const [verifying, setVerifying] = useState(false);
   const [verificationFailed, setVerificationFailed] = useState(false);
   const [recipientName, setRecipientName] = useState("");
+  const [datePreference, setDatePreference] = useState<'random' | 'specific' | null>(null);
+  const [recipientInstagram, setRecipientInstagram] = useState("");
+  const [genderPreference, setGenderPreference] = useState<'girl' | 'boy' | 'any' | null>(null);
   const [note, setNote] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -131,6 +134,9 @@ export default function Send() {
         type: activeTab,
         instagramUsername,
         recipientName: recipientName.trim(),
+        datePreference,
+        recipientInstagram: datePreference === 'specific' ? recipientInstagram.replace(/^@/, '').trim() : null,
+        genderPreference,
         vibe: activeTab === 'confession' ? selectedVibe : null,
         content: activeTab === 'confession' ? content : null,
         bouquetId: activeTab === 'bouquet' ? selectedBouquet : null,
@@ -218,6 +224,9 @@ export default function Send() {
               setInstagramVerified(false);
               setVerificationFailed(false);
               setRecipientName("");
+              setDatePreference(null);
+              setRecipientInstagram("");
+              setGenderPreference(null);
             }}
             className="text-sm font-ui uppercase tracking-widest border-b-2 border-primary pb-1 text-primary hover:text-primary/80 transition-colors font-bold"
           >
@@ -353,12 +362,91 @@ export default function Send() {
             <input
               value={recipientName}
               onChange={(e) => setRecipientName(e.target.value)}
-              placeholder="Enter their name (e.g. Eathen, Ajmal, Joshy)"
+              placeholder="Enter their name"
               className="w-full bg-white border-2 border-purple-200 rounded-xl p-3 text-ink outline-none focus:border-purple-400 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
             />
             <p className="text-[10px] text-purple-400 mt-2 ml-1 italic">
               * So we know who you're confessing to 💜
             </p>
+          </div>
+
+          {/* Date Preference */}
+          <div className="mb-8 p-5 bg-amber-50/50 rounded-2xl border border-amber-200/50">
+            <label className="block text-xs font-ui font-bold uppercase tracking-widest text-amber-600 mb-3 ml-1">
+              🎯 Who do you want to go with?
+            </label>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <button
+                onClick={() => { setDatePreference('random'); setRecipientInstagram(''); }}
+                className={cn(
+                  "p-4 rounded-xl border-2 text-center transition-all font-bold",
+                  datePreference === 'random'
+                    ? "border-amber-400 bg-amber-100 text-amber-700 shadow-md"
+                    : "border-stone-200 bg-white text-stone-500 hover:border-amber-300"
+                )}
+              >
+                🎲 Random
+                <span className="block text-[10px] font-normal mt-1">Surprise me!</span>
+              </button>
+              <button
+                onClick={() => setDatePreference('specific')}
+                className={cn(
+                  "p-4 rounded-xl border-2 text-center transition-all font-bold",
+                  datePreference === 'specific'
+                    ? "border-amber-400 bg-amber-100 text-amber-700 shadow-md"
+                    : "border-stone-200 bg-white text-stone-500 hover:border-amber-300"
+                )}
+              >
+                💘 Someone Specific
+                <span className="block text-[10px] font-normal mt-1">I know who I want</span>
+              </button>
+            </div>
+
+            {datePreference === 'specific' && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="mb-4"
+              >
+                <label className="block text-[10px] font-ui font-bold uppercase tracking-widest text-amber-500 mb-2 ml-1">
+                  Their Instagram
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400 font-bold">@</span>
+                  <input
+                    value={recipientInstagram}
+                    onChange={(e) => setRecipientInstagram(e.target.value.replace(/^@/, ''))}
+                    placeholder="their_username"
+                    className="w-full bg-white border-2 border-amber-200 rounded-xl p-3 pl-8 text-ink outline-none focus:border-amber-400 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+                  />
+                </div>
+              </motion.div>
+            )}
+
+            {/* Gender Preference */}
+            <label className="block text-[10px] font-ui font-bold uppercase tracking-widest text-amber-500 mb-2 ml-1 mt-4">
+              Preferred Gender
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {([
+                { id: 'girl' as const, label: '👩 Girl' },
+                { id: 'boy' as const, label: '👦 Boy' },
+                { id: 'any' as const, label: '✨ Anyone' },
+              ]).map((g) => (
+                <button
+                  key={g.id}
+                  onClick={() => setGenderPreference(g.id)}
+                  className={cn(
+                    "p-3 rounded-xl border-2 text-center text-sm transition-all font-bold",
+                    genderPreference === g.id
+                      ? "border-amber-400 bg-amber-100 text-amber-700 shadow-md"
+                      : "border-stone-200 bg-white text-stone-500 hover:border-amber-300"
+                  )}
+                >
+                  {g.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <AnimatePresence mode="wait">
