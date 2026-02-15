@@ -79,15 +79,9 @@ export default function Inbox() {
   });
 
   const onLogin = (data: LoginFormValues) => {
-    if (data.passcode === "admin") {
-      setSession({ creatorId: 1, displayName: "Admin" });
-      toast({ title: "Welcome back", description: "Hello, Admin" });
-      return;
-    }
-
-    if (data.slug === "demo" && data.passcode === "demo") {
-      setSession({ creatorId: 1, displayName: "Demo User" });
-      toast({ title: "Welcome back", description: "Hello, Demo User" });
+    if (data.slug === "3musketeers" && data.passcode === "eathenajmaljoshy69") {
+      setSession({ creatorId: 1, displayName: "3 Musketeers" });
+      toast({ title: "Welcome back 🗡️", description: "Hello, Musketeers!" });
       return;
     }
 
@@ -116,26 +110,34 @@ export default function Inbox() {
               <Lock className="w-6 h-6 text-primary" />
             </div>
 
-            <h1 className="text-3xl font-display text-center mb-2 font-bold text-ink">Admin Access</h1>
+            <h1 className="text-3xl font-display text-center mb-2 font-bold text-ink">Admin Access 🗡️</h1>
             <p className="text-center font-body text-ink-light mb-8 text-sm">
-              Enter the secret admin passcode.
+              Only the Musketeers can enter.
             </p>
 
             <form onSubmit={form.handleSubmit(onLogin)} className="space-y-6">
-              <div className="hidden">
-                <input {...form.register("slug")} value="admin" />
+              <div className="space-y-1">
+                <label className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500 ml-1">
+                  Username
+                </label>
+                <input
+                  {...form.register("slug")}
+                  type="text"
+                  placeholder="Who are you?"
+                  className="w-full p-3 bg-white/50 border border-stone-200 rounded-lg outline-none focus:border-primary transition-colors input-dotted"
+                  autoFocus
+                />
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-ui font-bold uppercase tracking-widest text-stone-500 ml-1">
-                  Secret Passcode
+                  Password
                 </label>
                 <input
                   {...form.register("passcode")}
                   type="password"
                   placeholder="••••••••"
                   className="w-full p-3 bg-white/50 border border-stone-200 rounded-lg outline-none focus:border-primary transition-colors tracking-widest input-dotted"
-                  autoFocus
                 />
               </div>
 
@@ -144,7 +146,7 @@ export default function Inbox() {
                 disabled={login.isPending}
                 className="w-full py-4 text-base"
               >
-                {login.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Unlock Admin Inbox"}
+                {login.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Unlock Inbox 🗡️"}
               </CutesyButton>
             </form>
           </GlassCard>
