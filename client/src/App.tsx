@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Send from "@/pages/Send";
+import Feed from "@/pages/Feed";
 import Inbox from "@/pages/Inbox";
 import { FloatingHearts } from "@/components/InteractiveComponents";
 
@@ -13,6 +14,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Send} />
+      <Route path="/feed" component={Feed} />
       <Route path="/inbox" component={Inbox} />
       <Route component={NotFound} />
     </Switch>

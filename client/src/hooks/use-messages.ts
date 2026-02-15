@@ -58,10 +58,77 @@ export function useMessages(creatorId: number | undefined) {
         senderTimestamp: msg.created_at, // using created_at as timestamp
         senderDevice: msg.sender_device,
         senderLocation: msg.sender_location,
-        instagramUsername: msg.instagram_username // Map new field
+        instagramUsername: msg.instagram_username, // Map new field
+        isPublic: msg.is_public // Map moderation field
       }));
     },
     // Only fetch if we are "logged in" (creatorId is present)
     enabled: !!creatorId,
+  });
+}
+
+// GET /feed -> Public Approved Messages
+export function usePublicMessages() {
+  return useQuery({
+    queryKey: ['public-messages'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('is_public', true) // Only approved messages
+        .order('created_at', { ascending: false });
+
+      if (error) throw new Error(error.message);
+
+      return data.map((msg: any) => ({
+        id: msg.id,
+        type: msg.type,
+        content: msg.content,
+        vibe: msg.vibe,
+        bouquetId: msg.bouquet_id,
+        note: msg.note,
+        createdAt: new Date(msg.created_at),
+        senderTimestamp: msg.created_at,
+        // NO instagram_username (Anonymous)
+      }));
+    },
+  });
+}
+
+// TOGGLE PUBLIC STATUS
+export function useTogglePublic() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, isPublic }: { id: number; isPublic: boolean }) => {
+      const { error } = await supabase
+        .from('messages')
+        .update({ is_public: isPublic })
+        .eq('id', id);
+
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['messages'] });
+      queryClient.invalidateQueries({ queryKey: ['public-messages'] });
+    },
+  });
+}
+
+// DELETE MESSAGE
+export function useDeleteMessage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const { error } = await supabase
+        .from('messages')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['messages'] });
+      queryClient.invalidateQueries({ queryKey: ['public-messages'] });
+    },
   });
 }

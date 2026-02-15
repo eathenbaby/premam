@@ -7,6 +7,7 @@ create table if not exists messages (
   bouquet_id text,
   note text,
   instagram_username text not null, -- Required for privacy policy (internal/admin use only)
+  is_public boolean default false, -- For moderation
   is_read boolean default false,
   sender_device text,
   sender_location text,
@@ -24,6 +25,15 @@ with check (true);
 
 -- Create Policy: Enable select for everyone (anon) - FOR NOW (Secure later if needed)
 -- Since we use client-side fetching in the admin panel which is also 'anon' technically unless we use auth.
+-- Create Policy: Enable select for public feed (anonymous users can see approved messages)
+create policy "Enable select for public approved messages" 
+on messages for select 
+to anon 
+using (is_public = true);
+
+-- Create Policy: Enable select for everyone (anon) - FOR NOW (Secure later if needed)
+-- Since we use client-side fetching in the admin panel which is also 'anon' technically unless we use auth.
+-- (This overlaps with the above but is broader for admin dev ease. In prod, strict RLS needed)
 create policy "Enable select for anon users" 
 on messages for select 
 to anon 
