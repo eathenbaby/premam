@@ -2,6 +2,7 @@
 create table if not exists users (
   id bigint primary key generated always as identity,
   full_name text not null,
+  email text not null unique,
   college_uid text not null unique,
   mobile_number text not null,
   instagram_username text not null,

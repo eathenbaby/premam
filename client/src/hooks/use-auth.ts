@@ -6,6 +6,7 @@ const STORAGE_KEY = "premam_user";
 export interface PremamUser {
   id: number;
   fullName: string;
+  email: string;
   collegeUid: string;
   mobileNumber: string;
   instagramUsername: string;
@@ -33,6 +34,7 @@ function mapRow(row: any): PremamUser {
   return {
     id: row.id,
     fullName: row.full_name,
+    email: row.email,
     collegeUid: row.college_uid,
     mobileNumber: row.mobile_number,
     instagramUsername: row.instagram_username,
@@ -42,60 +44,101 @@ function mapRow(row: any): PremamUser {
 export function useAuth() {
   const [user, setUser] = useState<PremamUser | null>(loadUser);
 
-  // Keep in sync across tabs
   useEffect(() => {
     const handler = () => setUser(loadUser());
     window.addEventListener("storage", handler);
     return () => window.removeEventListener("storage", handler);
   }, []);
 
-  const signup = useCallback(async (data: {
-    fullName: string;
-    collegeUid: string;
-    mobileNumber: string;
-    instagramUsername: string;
-  }) => {
-    // Check if collegeUid already exists
+  /** Step 1 of signup: send OTP to email */
+  const sendSignupOtp = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) throw new Error(error.message);
+  }, []);
+
+  /** Step 2 of signup: verify OTP then create user row */
+  const verifySignupOtp = useCallback(async (
+    email: string,
+    token: string,
+    profile: { fullName: string; collegeUid: string; mobileNumber: string; instagramUsername: string },
+  ) => {
+    const { error: otpErr } = await supabase.auth.verifyOtp({ email, token, type: "email" });
+    if (otpErr) throw new Error(otpErr.message);
+
+    // Check if collegeUid already taken
     const { data: existing } = await supabase
       .from("users")
       .select("id")
-      .eq("college_uid", data.collegeUid)
+      .eq("college_uid", profile.collegeUid)
       .limit(1);
 
     if (existing && existing.length > 0) {
       throw new Error("This College UID is already registered. Try logging in instead!");
     }
 
-    const { data: rows, error } = await supabase
+    // Check if email already registered
+    const { data: existingEmail } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email)
+      .limit(1);
+
+    if (existingEmail && existingEmail.length > 0) {
+      throw new Error("This email is already registered. Try logging in instead!");
+    }
+
+    const { data: row, error } = await supabase
       .from("users")
       .insert({
-        full_name: data.fullName,
-        college_uid: data.collegeUid,
-        mobile_number: data.mobileNumber,
-        instagram_username: data.instagramUsername.replace(/^@/, ""),
+        full_name: profile.fullName,
+        email,
+        college_uid: profile.collegeUid,
+        mobile_number: profile.mobileNumber,
+        instagram_username: profile.instagramUsername.replace(/^@/, ""),
+        is_verified: true,
       })
       .select()
       .single();
 
     if (error) throw new Error(error.message);
 
-    const u = mapRow(rows);
+    const u = mapRow(row);
     saveUser(u);
     setUser(u);
     return u;
   }, []);
 
-  const login = useCallback(async (collegeUid: string, mobileNumber: string) => {
+  /** Step 1 of login: send OTP to email */
+  const sendLoginOtp = useCallback(async (email: string) => {
+    // Verify that a user exists with this email first
+    const { data: existing } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email)
+      .limit(1);
+
+    if (!existing || existing.length === 0) {
+      throw new Error("No account found with that email. Sign up first!");
+    }
+
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) throw new Error(error.message);
+  }, []);
+
+  /** Step 2 of login: verify OTP then load user */
+  const verifyLoginOtp = useCallback(async (email: string, token: string) => {
+    const { error: otpErr } = await supabase.auth.verifyOtp({ email, token, type: "email" });
+    if (otpErr) throw new Error(otpErr.message);
+
     const { data: rows, error } = await supabase
       .from("users")
       .select("*")
-      .eq("college_uid", collegeUid)
-      .eq("mobile_number", mobileNumber)
+      .eq("email", email)
       .limit(1);
 
     if (error) throw new Error(error.message);
     if (!rows || rows.length === 0) {
-      throw new Error("No account found with that College UID and mobile number.");
+      throw new Error("No account found with that email.");
     }
 
     const u = mapRow(rows[0]);
@@ -104,15 +147,18 @@ export function useAuth() {
     return u;
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut().catch(() => {});
     clearUser();
     setUser(null);
   }, []);
 
   return {
     user,
-    login,
-    signup,
+    sendSignupOtp,
+    verifySignupOtp,
+    sendLoginOtp,
+    verifyLoginOtp,
     logout,
     isAuthenticated: !!user,
   };
