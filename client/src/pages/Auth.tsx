@@ -52,7 +52,7 @@ export default function Auth() {
       return;
     }
     if (!COLLEGE_UID_REGEX.test(collegeUid.trim())) {
-      toast({ variant: "destructive", title: "Invalid UID", description: "Enter a valid college UID." });
+      toast({ variant: "destructive", title: "Invalid UID", description: "Enter your college UID." });
       return;
     }
     if (!/^\d{10}$/.test(mobileNumber.trim())) {
@@ -78,7 +78,7 @@ export default function Auth() {
 
   const handleSignupVerify = async () => {
     if (!otpCode.trim() || otpCode.trim().length < 6) {
-      toast({ variant: "destructive", title: "Invalid code", description: "Enter the 6-digit code from your email." });
+      toast({ variant: "destructive", title: "Invalid code", description: "Enter the verification code from your email." });
       return;
     }
 
@@ -120,7 +120,7 @@ export default function Auth() {
 
   const handleLoginVerify = async () => {
     if (!otpCode.trim() || otpCode.trim().length < 6) {
-      toast({ variant: "destructive", title: "Invalid code", description: "Enter the 6-digit code from your email." });
+      toast({ variant: "destructive", title: "Invalid code", description: "Enter the verification code from your email." });
       return;
     }
 
@@ -191,7 +191,7 @@ export default function Auth() {
             </div>
 
             <h2 className="text-2xl font-display font-bold text-ink mb-2">Check your email! 📧</h2>
-            <p className="text-sm text-stone-500 mb-1">We sent a 6-digit code to</p>
+            <p className="text-sm text-stone-500 mb-1">We sent a verification code to</p>
             <p className="text-sm font-bold text-purple-600 mb-6">{email.trim()}</p>
 
             <div className="space-y-4">
@@ -201,8 +201,8 @@ export default function Auth() {
                 </label>
                 <input
                   value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  placeholder="000000"
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
+                  placeholder="••••••"
                   type="text"
                   inputMode="numeric"
                   autoComplete="one-time-code"
