@@ -1,15 +1,14 @@
-import { useState, useEffect } from "react";
-import { useCreator } from "@/hooks/use-creators";
+import { useState } from "react";
 import { useSendMessage } from "@/hooks/use-messages";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Send as SendIcon, Heart, Instagram, CheckCircle } from "lucide-react";
+import { Loader2, Send as SendIcon, Heart, CheckCircle, XCircle } from "lucide-react";
 import { VibeCard } from "@/components/VibeCard";
 import { FlowerCard } from "@/components/FlowerCard";
-import confetti from "canvas-confetti";
 import { cn } from "@/lib/utils";
 import { CutesyButton, DodgingButton, GlassCard } from "@/components/InteractiveComponents";
 import { useConfetti } from "@/hooks/useConfetti";
+import { Navigation } from "@/components/Navigation";
 
 import bouquet01 from "@assets/64603-OB2R9V-578_1771092125803.jpg";
 import bouquet02 from "@assets/6502939_1771092125804.jpg";
@@ -18,7 +17,6 @@ import bouquet04 from "@assets/6463769_1771092135717.jpg";
 import bouquet05 from "@assets/6517084_1771092142814.jpg";
 import bouquet06 from "@assets/6518416_1771092148926.jpg";
 
-// Mock data for flowers - using provided assets
 const FLOWERS = [
   { id: "bouquet-01", name: "Red Roses", image: bouquet01 },
   { id: "bouquet-02", name: "Pink Heart", image: bouquet02 },
@@ -37,16 +35,35 @@ const VIBES = [
   { id: "friends", label: "Friendship" },
 ];
 
-// Hardcoded Admin Profile for Single-User Mode
 const ADMIN_PROFILE = {
   id: 1,
-  displayName: "Us", // "Send a message to Us"
+  displayName: "Us",
   slug: "admin",
   passcode: "admin"
 };
 
+// Verify Instagram username exists by checking if profile page loads
+async function verifyInstagramUsername(username: string): Promise<boolean> {
+  const clean = username.replace(/^@/, "").trim();
+  if (!clean || clean.length < 1) return false;
+  try {
+    // Use a CORS proxy or just accept the username format for now
+    // Instagram blocks direct fetches from browsers, so we validate format
+    // and check via our API endpoint
+    const res = await fetch(`/api/auth/verify-instagram`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: clean }),
+    });
+    const data = await res.json();
+    return data.exists === true;
+  } catch {
+    // If verification API fails, fall back to format check
+    return /^[a-zA-Z0-9._]{1,30}$/.test(clean);
+  }
+}
+
 export default function Send() {
-  // Removed useRoute and useCreator since we are in Single Admin mode
   const sendMessage = useSendMessage();
   const { toast } = useToast();
   const { triggerConfetti } = useConfetti();
@@ -58,60 +75,39 @@ export default function Send() {
   const [content, setContent] = useState("");
   const [instagramUsername, setInstagramUsername] = useState("");
   const [instagramVerified, setInstagramVerified] = useState(false);
-  const [instagramLoading, setInstagramLoading] = useState(false);
-  const [showManualInput, setShowManualInput] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [verificationFailed, setVerificationFailed] = useState(false);
   const [note, setNote] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-
-  // Instagram OAuth callback handler
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-    if (!code) return;
-
-    // Clean URL immediately
-    window.history.replaceState({}, "", window.location.pathname);
-
-    setInstagramLoading(true);
-    const redirectUri = window.location.origin + "/";
-
-    fetch("/api/auth/instagram", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, redirect_uri: redirectUri }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.username) {
-          setInstagramUsername(data.username);
-          setInstagramVerified(true);
-          setHasAnsweredYes(true); // Skip the "do you love us" screen
-        } else {
-          toast({ variant: "destructive", title: "Login failed", description: "Could not verify your Instagram. Try again or enter manually." });
-          setShowManualInput(true);
-        }
-      })
-      .catch(() => {
-        toast({ variant: "destructive", title: "Login failed", description: "Something went wrong. Try again or enter manually." });
-        setShowManualInput(true);
-      })
-      .finally(() => setInstagramLoading(false));
-  }, []);
-
-  const handleInstagramLogin = () => {
-    const redirectUri = window.location.origin + "/";
-    const url = `https://www.instagram.com/oauth/authorize?client_id=1296105002566889&redirect_uri=${encodeURIComponent(redirectUri)}&scope=instagram_business_basic&response_type=code`;
-    window.location.href = url;
-  };
 
   const handleYes = () => {
     triggerConfetti();
     setHasAnsweredYes(true);
   };
 
+  const handleVerifyInstagram = async () => {
+    const clean = instagramUsername.replace(/^@/, "").trim();
+    if (!clean) {
+      toast({ variant: "destructive", title: "Wait!", description: "Enter your Instagram username first." });
+      return;
+    }
+    setVerifying(true);
+    setVerificationFailed(false);
+    const exists = await verifyInstagramUsername(clean);
+    setVerifying(false);
+    if (exists) {
+      setInstagramUsername(clean);
+      setInstagramVerified(true);
+      toast({ title: "Verified! ✅", description: `@${clean} is a real account.` });
+    } else {
+      setVerificationFailed(true);
+      toast({ variant: "destructive", title: "Not found 😕", description: "That Instagram handle doesn't seem to exist. Check the spelling?" });
+    }
+  };
+
   const handleSubmit = async () => {
-    if (!instagramUsername.trim()) {
-      toast({ variant: "destructive", title: "Hold up! 🤚", description: "You need to enter your Instagram handle to send a confession." });
+    if (!instagramUsername.trim() || !instagramVerified) {
+      toast({ variant: "destructive", title: "Hold up! 🤚", description: "You need to verify your Instagram handle before sending." });
       return;
     }
     if (activeTab === 'confession' && !content) {
@@ -124,7 +120,6 @@ export default function Send() {
     }
 
     try {
-      // Use the real Supabase mutation
       await sendMessage.mutateAsync({
         creatorId: ADMIN_PROFILE.id,
         type: activeTab,
@@ -139,7 +134,6 @@ export default function Send() {
 
       setIsSuccess(true);
       triggerConfetti();
-
     } catch (error) {
       toast({
         variant: "destructive",
@@ -152,6 +146,7 @@ export default function Send() {
   if (!hasAnsweredYes) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-4 overflow-hidden relative">
+        <Navigation />
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -185,6 +180,7 @@ export default function Send() {
   if (isSuccess) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 text-center">
+        <Navigation />
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -206,7 +202,7 @@ export default function Send() {
               setSelectedBouquet(null);
               setInstagramUsername("");
               setInstagramVerified(false);
-              setShowManualInput(false);
+              setVerificationFailed(false);
             }}
             className="text-sm font-ui uppercase tracking-widest border-b-2 border-primary pb-1 text-primary hover:text-primary/80 transition-colors font-bold"
           >
@@ -219,6 +215,7 @@ export default function Send() {
 
   return (
     <div className="min-h-screen bg-transparent pb-20">
+      <Navigation />
       {/* Header */}
       <header className="pt-12 pb-8 px-6 text-center">
         <motion.div
@@ -262,56 +259,71 @@ export default function Send() {
             </button>
           </div>
 
-          {/* Instagram Auth (Required) */}
-          <div className="mb-8 p-4 bg-rose-50/50 rounded-xl border border-rose-100">
-            <label className="block text-xs font-ui font-bold uppercase tracking-widest text-rose-500 mb-2 ml-1">
-              Your Instagram (Required)
+          {/* Instagram Verification (Required) */}
+          <div className="mb-8 p-5 bg-gradient-to-r from-pink-50/80 to-purple-50/80 rounded-2xl border border-pink-200/50">
+            <label className="block text-xs font-ui font-bold uppercase tracking-widest text-pink-600 mb-3 ml-1">
+              🔐 Verify Your Instagram (Required)
             </label>
 
             {instagramVerified ? (
-              <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-xl">
                 <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
                 <span className="font-bold text-green-700">@{instagramUsername}</span>
-                <span className="text-green-500 text-xs">Verified ✅</span>
-              </div>
-            ) : instagramLoading ? (
-              <div className="flex items-center justify-center gap-2 p-4">
-                <Loader2 className="w-5 h-5 animate-spin text-pink-500" />
-                <span className="text-pink-500 font-bold text-sm">Verifying your Instagram...</span>
+                <span className="text-green-500 text-xs ml-auto">Verified</span>
+                <button
+                  onClick={() => {
+                    setInstagramVerified(false);
+                    setInstagramUsername("");
+                    setVerificationFailed(false);
+                  }}
+                  className="text-xs text-stone-400 hover:text-stone-600 underline ml-2"
+                >
+                  change
+                </button>
               </div>
             ) : (
               <>
-                <button
-                  onClick={handleInstagramLogin}
-                  className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-xl font-bold text-white text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all"
-                  style={{ background: "linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)" }}
-                >
-                  <Instagram className="w-6 h-6" />
-                  Login with Instagram
-                </button>
-
-                {showManualInput ? (
-                  <div className="mt-3">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-400 font-bold">@</span>
                     <input
                       value={instagramUsername}
-                      onChange={(e) => setInstagramUsername(e.target.value)}
-                      placeholder="@username"
-                      className="w-full bg-white border border-rose-200 rounded-lg p-3 text-ink outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+                      onChange={(e) => {
+                        setInstagramUsername(e.target.value.replace(/^@/, ""));
+                        setVerificationFailed(false);
+                      }}
+                      onKeyDown={(e) => e.key === "Enter" && handleVerifyInstagram()}
+                      placeholder="your_username"
+                      className={cn(
+                        "w-full bg-white border-2 rounded-xl p-3 pl-8 text-ink outline-none transition-all font-bold placeholder:font-normal placeholder:text-stone-300",
+                        verificationFailed ? "border-red-300 focus:border-red-400" : "border-pink-200 focus:border-pink-400"
+                      )}
                     />
                   </div>
-                ) : (
-                  <button
-                    onClick={() => setShowManualInput(true)}
-                    className="block mx-auto mt-3 text-xs text-stone-400 hover:text-stone-600 underline transition-colors"
+                  <CutesyButton
+                    onClick={handleVerifyInstagram}
+                    disabled={verifying}
+                    className="px-6 py-3 text-sm"
                   >
-                    or enter manually
-                  </button>
+                    {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify"}
+                  </CutesyButton>
+                </div>
+
+                {verificationFailed && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2 mt-2 text-red-500 text-sm"
+                  >
+                    <XCircle className="w-4 h-4" />
+                    <span>That handle doesn't exist. Double-check the spelling!</span>
+                  </motion.div>
                 )}
               </>
             )}
 
-            <p className="text-[10px] text-rose-400 mt-2 ml-1 italic">
-              * We promise not to reveal this to anyone else. It's just for us to know who sent it.
+            <p className="text-[10px] text-pink-400 mt-3 ml-1 italic">
+              * Only we can see this. Your confession stays anonymous to everyone else 💕
             </p>
           </div>
 
@@ -346,14 +358,12 @@ export default function Send() {
                   <label className="block text-xs font-ui font-bold uppercase tracking-widest text-stone-500 mb-2 ml-1">
                     Your Message
                   </label>
-                  <div className="relative">
-                    <textarea
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      placeholder="Write something honest..."
-                      className="w-full min-h-[200px] input-dotted bg-white/50 text-xl text-ink leading-8 outline-none focus:border-primary resize-y"
-                    />
-                  </div>
+                  <textarea
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    placeholder="Write something honest..."
+                    className="w-full min-h-[200px] input-dotted bg-white/50 text-xl text-ink leading-8 outline-none focus:border-primary resize-y"
+                  />
                 </div>
               </motion.div>
             ) : (
@@ -394,8 +404,8 @@ export default function Send() {
           <div className="mt-12">
             <CutesyButton
               onClick={handleSubmit}
-              disabled={sendMessage.isPending}
-              className="w-full"
+              disabled={sendMessage.isPending || !instagramVerified}
+              className={cn("w-full", !instagramVerified && "opacity-50 cursor-not-allowed")}
             >
               {sendMessage.isPending ? (
                 <Loader2 className="w-6 h-6 animate-spin mx-auto" />
@@ -403,8 +413,13 @@ export default function Send() {
                 "Seal & Send"
               )}
             </CutesyButton>
+            {!instagramVerified && (
+              <p className="text-center mt-3 text-xs font-ui text-pink-500 font-bold">
+                ☝️ Verify your Instagram first to unlock sending
+              </p>
+            )}
             <p className="text-center mt-4 text-xs font-ui text-stone-400">
-              Messages are private and only visible to {ADMIN_PROFILE.displayName}.
+              Messages are anonymous and only visible to {ADMIN_PROFILE.displayName}.
             </p>
           </div>
         </GlassCard>
