@@ -109,8 +109,90 @@ export function usePublicMessages() {
         note: msg.note,
         createdAt: new Date(msg.created_at),
         senderTimestamp: msg.created_at,
+        datePreference: msg.date_preference,
+        genderPreference: msg.gender_preference,
+        recipientName: msg.recipient_name,
         // NO instagram_username (Anonymous)
       }));
+    },
+  });
+}
+
+// Simple browser fingerprint for vote deduplication
+function getFingerprint(): string {
+  const nav = navigator;
+  const raw = [
+    nav.userAgent,
+    nav.language,
+    screen.width,
+    screen.height,
+    screen.colorDepth,
+    new Date().getTimezoneOffset(),
+  ].join('|');
+  // Simple hash
+  let hash = 0;
+  for (let i = 0; i < raw.length; i++) {
+    const char = raw.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return hash.toString(36);
+}
+
+// GET votes for a message
+export function useVotes(messageId: number) {
+  return useQuery({
+    queryKey: ['votes', messageId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('votes')
+        .select('*')
+        .eq('message_id', messageId);
+
+      if (error) throw new Error(error.message);
+
+      const yes = data.filter((v: any) => v.vote === 'yes').length;
+      const no = data.filter((v: any) => v.vote === 'no').length;
+      const myFingerprint = getFingerprint();
+      const myVote = data.find((v: any) => v.voter_fingerprint === myFingerprint);
+
+      return { yes, no, total: yes + no, myVote: myVote?.vote as string | undefined };
+    },
+  });
+}
+
+// Cast a vote
+export function useCastVote() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ messageId, vote }: { messageId: number; vote: 'yes' | 'no' }) => {
+      const fingerprint = getFingerprint();
+
+      // Check if already voted
+      const { data: existing } = await supabase
+        .from('votes')
+        .select('id')
+        .eq('message_id', messageId)
+        .eq('voter_fingerprint', fingerprint)
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        // Update existing vote
+        const { error } = await supabase
+          .from('votes')
+          .update({ vote })
+          .eq('id', existing[0].id);
+        if (error) throw new Error(error.message);
+      } else {
+        // New vote
+        const { error } = await supabase
+          .from('votes')
+          .insert({ message_id: messageId, vote, voter_fingerprint: fingerprint });
+        if (error) throw new Error(error.message);
+      }
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['votes', variables.messageId] });
     },
   });
 }

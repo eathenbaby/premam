@@ -43,6 +43,15 @@ export const messages = pgTable("messages", {
   isArchived: boolean("is_archived").default(false),
 });
 
+// Votes on public feed messages
+export const votes = pgTable("votes", {
+  id: serial("id").primaryKey(),
+  messageId: integer("message_id").notNull().references(() => messages.id),
+  vote: text("vote").notNull(), // 'yes' | 'no'
+  voterFingerprint: text("voter_fingerprint").notNull(), // browser fingerprint to prevent duplicates
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // === SCHEMAS ===
 
 export const insertCreatorSchema = createInsertSchema(creators).pick({
@@ -68,6 +77,12 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
 });
 
 
+export const insertVoteSchema = createInsertSchema(votes).pick({
+  messageId: true,
+  vote: true,
+  voterFingerprint: true,
+});
+
 // === EXPLICIT API TYPES ===
 
 export type Creator = typeof creators.$inferSelect;
@@ -82,6 +97,9 @@ export type SendMessageRequest = InsertMessage;
 // Response types
 export type CreatorResponse = Creator;
 export type MessageResponse = Message;
+
+export type Vote = typeof votes.$inferSelect;
+export type InsertVote = z.infer<typeof insertVoteSchema>;
 
 // Login request for inbox
 export const loginSchema = z.object({

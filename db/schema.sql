@@ -19,8 +19,18 @@ create table if not exists messages (
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
 
+-- Votes table for feed polls
+create table if not exists votes (
+  id bigint primary key generated always as identity,
+  message_id bigint not null references messages(id) on delete cascade,
+  vote text not null, -- 'yes' or 'no'
+  voter_fingerprint text not null,
+  created_at timestamp with time zone default timezone('utc'::text, now())
+);
+
 -- Enable RLS
 alter table messages enable row level security;
+alter table votes enable row level security;
 
 -- Create Policy: Enable insert for everyone (anon)
 create policy "Enable insert for anon users" 
@@ -49,6 +59,16 @@ create policy "Enable update for anon users"
 on messages for update
 to anon 
 using (true);
+
+-- Votes policies
+create policy "Enable insert for anon votes"
+on votes for insert to anon with check (true);
+
+create policy "Enable select for anon votes"
+on votes for select to anon using (true);
+
+create policy "Enable update for anon votes"
+on votes for update to anon using (true);
 
 -- Note: For a real secure app, we should use Supabase Auth and restrict select/update to authenticated users only.
 -- But given the "hardcoded admin" requirement without detailed auth setup, this allows the app to function.
