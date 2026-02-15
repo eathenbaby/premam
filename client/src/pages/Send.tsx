@@ -115,8 +115,8 @@ export default function Send() {
       toast({ variant: "destructive", title: "Hold up! 🤚", description: "You need to verify your Instagram handle before sending." });
       return;
     }
-    if (!recipientName.trim()) {
-      toast({ variant: "destructive", title: "Wait! 💌", description: "Tell us who this confession is for!" });
+    if (datePreference === 'specific' && !recipientInstagram.trim()) {
+      toast({ variant: "destructive", title: "Wait! 💘", description: "Enter their Instagram if you want someone specific!" });
       return;
     }
     if (activeTab === 'confession' && !content) {
@@ -354,22 +354,6 @@ export default function Send() {
             </p>
           </div>
 
-          {/* Who is this for? */}
-          <div className="mb-8 p-5 bg-purple-50/50 rounded-2xl border border-purple-200/50">
-            <label className="block text-xs font-ui font-bold uppercase tracking-widest text-purple-600 mb-3 ml-1">
-              💌 Who is this for?
-            </label>
-            <input
-              value={recipientName}
-              onChange={(e) => setRecipientName(e.target.value)}
-              placeholder="Enter their name"
-              className="w-full bg-white border-2 border-purple-200 rounded-xl p-3 text-ink outline-none focus:border-purple-400 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
-            />
-            <p className="text-[10px] text-purple-400 mt-2 ml-1 italic">
-              * So we know who you're confessing to 💜
-            </p>
-          </div>
-
           {/* Date Preference */}
           <div className="mb-8 p-5 bg-amber-50/50 rounded-2xl border border-amber-200/50">
             <label className="block text-xs font-ui font-bold uppercase tracking-widest text-amber-600 mb-3 ml-1">
@@ -406,19 +390,32 @@ export default function Send() {
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
-                className="mb-4"
+                className="space-y-3 mb-4"
               >
-                <label className="block text-[10px] font-ui font-bold uppercase tracking-widest text-amber-500 mb-2 ml-1">
-                  Their Instagram
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400 font-bold">@</span>
+                <div>
+                  <label className="block text-[10px] font-ui font-bold uppercase tracking-widest text-amber-500 mb-2 ml-1">
+                    Their Name
+                  </label>
                   <input
-                    value={recipientInstagram}
-                    onChange={(e) => setRecipientInstagram(e.target.value.replace(/^@/, ''))}
-                    placeholder="their_username"
-                    className="w-full bg-white border-2 border-amber-200 rounded-xl p-3 pl-8 text-ink outline-none focus:border-amber-400 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+                    value={recipientName}
+                    onChange={(e) => setRecipientName(e.target.value)}
+                    placeholder="Enter their name"
+                    className="w-full bg-white border-2 border-amber-200 rounded-xl p-3 text-ink outline-none focus:border-amber-400 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
                   />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-ui font-bold uppercase tracking-widest text-amber-500 mb-2 ml-1">
+                    Their Instagram
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-400 font-bold">@</span>
+                    <input
+                      value={recipientInstagram}
+                      onChange={(e) => setRecipientInstagram(e.target.value.replace(/^@/, ''))}
+                      placeholder="their_username"
+                      className="w-full bg-white border-2 border-amber-200 rounded-xl p-3 pl-8 text-ink outline-none focus:border-amber-400 transition-all font-bold placeholder:font-normal placeholder:text-stone-300"
+                    />
+                  </div>
                 </div>
               </motion.div>
             )}
