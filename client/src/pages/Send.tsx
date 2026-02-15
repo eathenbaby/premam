@@ -167,7 +167,7 @@ export default function Send() {
         >
           <div className="mb-8">
             <img
-              src="https://media.tenor.com/nB_KjP_lXy4AAAAi/cute-bear.gif"
+              src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif"
               alt="Cute bear"
               className="w-48 h-48 mx-auto rounded-full object-cover border-4 border-white shadow-xl"
             />
